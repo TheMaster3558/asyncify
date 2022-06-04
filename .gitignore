@@ -1,0 +1,7 @@
+.idea
+venv/
+
+.mypy_cache
+
+main.py
+
