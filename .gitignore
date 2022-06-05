@@ -5,3 +5,6 @@ venv/
 
 main.py
 
+*.py[cod]
+__pycache__
+
