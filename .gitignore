@@ -8,3 +8,5 @@ main.py
 *.py[cod]
 __pycache__
 
+docs/_build
+
