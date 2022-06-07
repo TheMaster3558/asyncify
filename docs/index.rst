@@ -1,6 +1,14 @@
+.. currentmodule:: asyncify
+
 Welcome to asyncify's documentation!
 ====================================
 
-.. automodule:: asyncify
-  :members:
-  :imported-members:
+.. autofunction:: asyncify.asyncify_func
+
+|
+
+.. autofunction:: asyncify.syncify_func
+
+|
+
+.. autofunction:: asyncify.async_iter

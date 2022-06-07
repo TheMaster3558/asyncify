@@ -27,8 +27,6 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
     --------
     .. code:: py
 
-        import asyncio
-
         import asyncify
         import requests
 
@@ -41,8 +39,6 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
 
         async def main():
             text = await get('https://python.org')
-
-        asyncio.run(main())
 
         # this is very useful to turn a blocking library into an async library
         get = asyncify(requests.get)
@@ -63,7 +59,6 @@ def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
     .. code:: py
 
         import asyncio
-
         import asyncify
 
         @asyncify.syncify_func

@@ -45,4 +45,24 @@ class AsyncIterable(Generic[T]):
 
 
 def async_iter(iterable: Iterable[T], *, delay: float = 0) -> AsyncIterable[T]:
+    """
+    Asynchronously iterate with an optional delay in between iterations.
+
+    Parameters
+    -----------
+    iterable: :class:`Iterable`
+        Anything that can be synchronously be iterated over.
+    delay: Optional[:class:`float`]
+        An optional delay between each iteration.
+
+    Example
+    --------
+    .. code:: py
+
+        import asyncify
+
+        async def main():
+            async for num in asyncify.async_iter([1, 2, 3], delay=2):
+                print('%d seconds have passed!' % (num * 2))
+    """
     return AsyncIterable(iterable, delay=delay)
