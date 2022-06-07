@@ -21,7 +21,7 @@ class AsyncIterable(Generic[T]):
         self.delay = delay
 
     def __await__(self) -> Generator[Any, Any, List[T]]:
-        return self.flatten().__await__()   # type: ignore
+        return self.flatten().__await__()
 
     def __aiter__(self):
         self.iterator = iter(self.iterable)
