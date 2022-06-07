@@ -10,6 +10,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import re
+
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
@@ -22,7 +24,8 @@ copyright = '2022, The Master'
 author = 'The Master'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.0a'
+with open('../asyncify/__init__.py') as f:
+    release = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 
 # -- General configuration ---------------------------------------------------
