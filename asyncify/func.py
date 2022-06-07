@@ -4,12 +4,12 @@ import sys
 
 from typing import Any, TypeVar
 
-if sys.version_info > (3, 10):
+if sys.version_info >= (3, 10):
     from typing import ParamSpec
 else:
     from typing_extensions import ParamSpec
 
-if sys.version_info > (3, 9):
+if sys.version_info >= (3, 9):
     from collections.abc import Callable, Coroutine
 else:
     from typing import Callable, Coroutine
