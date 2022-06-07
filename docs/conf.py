@@ -22,7 +22,7 @@ copyright = '2022, The Master'
 author = 'The Master'
 
 # The full version, including alpha/beta/rc tags
-with open('../discord/__init__.py') as f:
+with open('../asyncify/__init__.py') as f:
     release = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 
