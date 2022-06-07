@@ -1,14 +1,14 @@
 import asyncio
 import sys
 
-from typing import Any, Generator, Generic, TypeAlias, TypeVar, Optional
+from typing import Any, Generator, Generic, TypeVar, Optional
 
 if sys.version_info >= (3, 9):
     from collections.abc import Iterable, Iterator
-    from typing import List
-else:
     from typing import Iterable, Iterator
-    List: TypeAlias = list
+    List = list  # typing.List deprecated, use builtins.list instead
+else:
+    from typing import List
 
 
 T = TypeVar('T')
