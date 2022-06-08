@@ -11,4 +11,8 @@ Welcome to asyncify's documentation!
 
 |
 
+.. autofunction:: asyncify.set_max_threads
+
+|
+
 .. autofunction:: asyncify.async_iter
