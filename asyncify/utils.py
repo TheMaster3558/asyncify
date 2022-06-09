@@ -19,3 +19,9 @@ class OptionalSemaphore:
     def release(self) -> None:
         if self.semaphore is not None:
             self.semaphore.release()
+
+    async def __aenter__(self):
+        await self.acquire()
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.release()

@@ -27,13 +27,13 @@ sentinel: Any = object()
 _semaphore = OptionalSemaphore(value=None)
 
 
-def set_max_threads(max_threads: int) -> None:
+def set_max_threads(max_threads: Optional[int]) -> None:
     """
     Set the limit on the amount of threads this library can use.
 
     Parameters
     -----------
-    max_threads: int
+    max_threads: Optional[:class:`int`]
         The max amount of threads.
 
     .. note::
