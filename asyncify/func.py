@@ -5,7 +5,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Optional, TypeVar
 
-from .utils import Semaphore
+from .utils import OptionalSemaphore
 
 if sys.version_info >= (3, 10):
     from typing import Concatenate, ParamSpec
@@ -24,7 +24,7 @@ T = TypeVar('T')
 
 sentinel: Any = object()
 
-_semaphore = Semaphore(value=None)
+_semaphore = OptionalSemaphore(value=None)
 
 
 def set_max_threads(max_threads: int) -> None:
@@ -44,7 +44,7 @@ def set_max_threads(max_threads: int) -> None:
     # in case a user sets executor to their own or None
 
     global _semaphore
-    _semaphore = Semaphore(max_threads)
+    _semaphore = OptionalSemaphore(max_threads)
 
 
 def asyncify_func(func: Callable[P, T]) -> Callable[Concatenate[ThreadPoolExecutor, P], Coroutine[Any, Any, T]]:
