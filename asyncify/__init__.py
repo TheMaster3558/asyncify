@@ -3,3 +3,4 @@ from .iterable import async_iter
 
 
 __version__ = '1.0.0a'
+__author__ = 'The Master'

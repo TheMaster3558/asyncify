@@ -10,6 +10,12 @@ else:
     from typing import Iterable, Iterator, List
 
 
+__all__ = (
+    'AsyncIterable',
+    'async_iter'
+)
+
+
 T = TypeVar('T')
 
 

@@ -1,5 +1,8 @@
 import asyncio
-from typing import Optional
+from typing import Any, Optional
+
+
+__all__ = ()
 
 
 class OptionalSemaphore:
@@ -25,3 +28,6 @@ class OptionalSemaphore:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         self.release()
+
+
+sentinel: Any = object()

@@ -5,7 +5,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Optional, TypeVar
 
-from .utils import OptionalSemaphore
+from .utils import OptionalSemaphore, sentinel
 
 if sys.version_info >= (3, 10):
     from typing import Concatenate, ParamSpec
@@ -18,11 +18,16 @@ else:
     from typing import Callable, Coroutine
 
 
+__all__ = (
+    'asyncify_func',
+    'syncify_func',
+    'set_max_threads'
+)
+
+
 P = ParamSpec('P')
 T = TypeVar('T')
 
-
-sentinel: Any = object()
 
 _semaphore = OptionalSemaphore(value=None)
 
