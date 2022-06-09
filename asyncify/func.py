@@ -50,6 +50,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
         get = asyncify(requests.get)
     
     .. note::
+    
         This function uses the default loop executor.
         Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
     """
