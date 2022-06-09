@@ -17,8 +17,7 @@ else:
 
 __all__ = (
     'asyncify_func',
-    'syncify_func',
-    'set_max_threads'
+    'syncify_func'
 )
 
 
