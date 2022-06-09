@@ -23,6 +23,7 @@ setup(
     license='MIT',
     description='A python library to make things async!',
     project_urls={
+        'GitHub': 'https://github.com/chawkk6404/asyncify',
         'Documentation': 'https://asyncify.readthedocs.io/en/latest'
     },
     long_description=readme,
