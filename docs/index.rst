@@ -7,11 +7,15 @@ Welcome to asyncify's documentation!
 
 |
 
+.. autofunction:: asyncify.asyncify_class
+
+|
+
 .. autofunction:: asyncify.syncify_func
 
 |
 
-.. autofunction:: asyncify.set_max_threads
+.. autofunction:: asyncify.ignore
 
 |
 
