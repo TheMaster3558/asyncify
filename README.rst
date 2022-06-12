@@ -5,7 +5,7 @@ A python library to make things async!
 
 
 Documentation
------------
+---------------
 https://toppy-python.readthedocs.io/en/latest/
 
 
@@ -20,20 +20,20 @@ Python 3.5 or higher is required
 
 Example
 --------
-    .. code:: py
+.. code:: py
 
-        import asyncify
-        import requests
+    import asyncify
+    import requests
 
-        @asyncify.asyncify_func
-        def get(url: str) -> str:
-            return requests.get(url).text
+    @asyncify.asyncify_func
+    def get(url: str) -> str:
+        return requests.get(url).text
 
-        # `get` is no longer a blocking function
-        # it is now a coroutine function
+    # `get` is no longer a blocking function
+    # it is now a coroutine function
 
-        async def main():
-            text = await get('https://python.org')
+    async def main():
+        text = await get('https://python.org')
 
-        # this is very useful to turn a blocking library into an async library
-        get = asyncify(requests.get)
+    # this is very useful to turn a blocking library into an async library
+    get = asyncify(requests.get)
