@@ -6,7 +6,7 @@ A python library to make things async!
 
 Documentation
 ---------------
-https://toppy-python.readthedocs.io/en/latest/
+https://asyncify.readthedocs.io/en/latest/
 
 
 Installation
