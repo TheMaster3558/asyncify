@@ -64,10 +64,6 @@ def asyncify_class(cls: TypeT) -> TypeT:
 
         async def main():
             await client.request('GET', 'https://python.org')
-
-        # to make inherited class asyncified
-        class Session(asyncify.asyncify_class(requests.Session)):
-            ...
     """
 
     for name, func in inspect.getmembers(cls):
