@@ -2,21 +2,25 @@ import re
 from setuptools import setup
 
 
-with open('./asyncify/__init__.py') as f:
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
+
+with open('asyncify/__init__.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
-    
-    
+
+
 with open('README.rst', 'r') as rm:
     readme = rm.read()
-    
-    
+
+
 packages = [
     'asyncify'
 ]
 
 
 setup(
-    name='asyncify',
+    name='asyncify-python',
     author='The Master',
     version=version,
     packages=packages,
@@ -29,16 +33,17 @@ setup(
     long_description=readme,
     long_description_content_type='text/x-rst',
     include_package_data=True,
+    install_requires=requirements,
     python_requires='>=3.5.0',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7'
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -49,4 +54,3 @@ setup(
         'Typing :: Typed',
     ]
 )
-
