@@ -8,7 +8,6 @@ if TYPE_CHECKING:
     from typing_extensions import ParamSpec
     
 
-
 __all__ = (
     'asyncify_func',
     'syncify_func'
