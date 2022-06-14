@@ -1,14 +1,9 @@
 import inspect
 import sys
 import types
-from typing import TypeVar
+from typing import Callable, TypeVar
 
 from .func import asyncify_func
-
-if sys.version_info >= (3, 10):
-    from collections.abc import Callable
-else:
-    from typing import Callable
 
 
 __all__ = (
