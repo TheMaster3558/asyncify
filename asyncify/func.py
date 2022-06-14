@@ -1,6 +1,5 @@
 import asyncio
 import functools
-import sys
 
 from typing import TYPE_CHECKING, Any, Callable, Coroutine, Optional, TypeVar
 
