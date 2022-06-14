@@ -1,5 +1,4 @@
 import inspect
-import sys
 import types
 from typing import Callable, TypeVar
 
