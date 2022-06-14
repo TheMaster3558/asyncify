@@ -1,6 +1,6 @@
 import inspect
 import types
-from typing import Callable, TypeVar
+from typing import Callable, Tuple, TypeVar
 
 from .func import asyncify_func
 
@@ -15,7 +15,7 @@ CallableT = TypeVar('CallableT', bound=Callable)
 TypeT = TypeVar('TypeT', bound=type)
 
 
-function_types: tuple[type, ...] = (
+function_types: Tuple[type, ...] = (
     types.FunctionType,
     classmethod,
     staticmethod
