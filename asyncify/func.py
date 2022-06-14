@@ -2,17 +2,11 @@ import asyncio
 import functools
 import sys
 
-from typing import Any, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Coroutine, Optional, TypeVar
 
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
+if TYPE_CHECKING:
     from typing_extensions import ParamSpec
-
-if sys.version_info >= (3, 9):
-    from collections.abc import Callable, Coroutine
-else:
-    from typing import Callable, Coroutine
+    
 
 
 __all__ = (
@@ -21,8 +15,12 @@ __all__ = (
 )
 
 
-P = ParamSpec('P')
 T = TypeVar('T')
+
+if TYPE_CHECKING:
+    P = ParamSpec('P')
+else:
+    P = TypeVar('P')
 
 
 def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
