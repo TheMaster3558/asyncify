@@ -1,19 +1,11 @@
 import asyncio
 import functools
-import sys
 
-from typing import Any, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Coroutine, Optional, TypeVar
 
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
+if TYPE_CHECKING:
     from typing_extensions import ParamSpec
-
-if sys.version_info >= (3, 9):
-    from collections.abc import Callable, Coroutine
-else:
-    from typing import Callable, Coroutine
-
+    
 
 __all__ = (
     'asyncify_func',
@@ -21,11 +13,15 @@ __all__ = (
 )
 
 
-P = ParamSpec('P')
 T = TypeVar('T')
 
+if TYPE_CHECKING:
+    P = ParamSpec('P')
+else:
+    P = TypeVar('P')
 
-def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
+
+def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]]":
     """
     Make a synchronous function into an asynchronous function by running it in a separate thread.
 
@@ -56,7 +52,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
     """
 
     @functools.wraps(func)
-    async def async_func(*args: P.args, **kwargs: P.kwargs) -> T:
+    async def async_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
         new_func = functools.partial(func, *args, **kwargs)
         
         loop = asyncio.get_running_loop()
@@ -65,7 +61,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
     return async_func
 
 
-def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
+def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]":
     """
     Make an asynchronous function a synchronous function.
 
@@ -95,7 +91,7 @@ def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
         """
 
     @functools.wraps(func)
-    def sync_func(*args: P.args, **kwargs: P.kwargs) -> T:
+    def sync_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
         try:
             loop = asyncio.get_running_loop()
         except RuntimeError:

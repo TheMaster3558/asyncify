@@ -1,13 +1,5 @@
 import asyncio
-import sys
-
-from typing import Any, Generator, Generic, TypeVar, Optional
-
-if sys.version_info >= (3, 9):
-    from collections.abc import Iterable, Iterator
-    List = list  # typing.List deprecated, use builtins.list instead
-else:
-    from typing import Iterable, Iterator, List
+from typing import Any, Generator, Generic, Iterable, Iterator, List, TypeVar, Optional
 
 
 __all__ = (
@@ -20,7 +12,7 @@ T = TypeVar('T')
 
 
 class AsyncIterable(Generic[T]):
-    def __init__(self, iterable: Iterable[T], *, delay: float = 0):
+    def __init__(self, iterable: Iterable[T], *, delay: float = 0.0):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
 
