@@ -33,7 +33,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
         import requests
 
         @asyncify.asyncify_func
-        def get(url: str) -> str:
+        def get(url):
             return requests.get(url).text
 
         # `get` is no longer a blocking function

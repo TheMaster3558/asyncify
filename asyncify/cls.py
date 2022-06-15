@@ -48,7 +48,7 @@ def asyncify_class(cls: TypeT) -> TypeT:
             def __init__(self):  # ignored by asyncify
                 self.session = requests.Session()
 
-            def request(self, method: str, url: str):  # now a coroutine function
+            def request(self, method, url):  # now a coroutine function
                 return self.session.request(method, url)
 
         # can also be used like this
