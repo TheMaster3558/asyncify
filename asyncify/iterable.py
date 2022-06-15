@@ -25,14 +25,13 @@ class AsyncIterable(Generic[T]):
     def __init__(
             self,
             iterable: Iterable[T],
-            *, callback: Callable[[], Coroutine],
-            before: bool = False,
-            after: bool = True
+            *,
+            before: Optional[Callable[[], Any]] = None,
+            after: Optional[Callable[[], Any]] = None
     ):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
 
-        self.callback = callback
         self.before = before
         self.after = after
 
@@ -46,8 +45,8 @@ class AsyncIterable(Generic[T]):
     async def __anext__(self) -> T:
         assert self.iterator is not None
 
-        if self.before:
-            await self.callback()
+        if self.before is not None:
+            await self.before()
 
         try:
             item: T = next(self.iterator)
@@ -55,8 +54,8 @@ class AsyncIterable(Generic[T]):
             self.iterator = None
             raise StopAsyncIteration
 
-        if self.after:
-            await self.callback()
+        if self.after is not None:
+            await self.after()
 
         return item
 
@@ -66,23 +65,24 @@ class AsyncIterable(Generic[T]):
 
 def async_iter(
         iterable: Iterable[T],
-        callback: Callable[[], Coroutine],
-        before: bool = False,
-        after: bool = True
+        before: Optional[Callable[[], Any]] = None,
+        after: Optional[Callable[[], Any]] = None
 ) -> AsyncIterable[T]:
     """
-    Asynchronously iterate through an iterable while calling a callback in between each iteration.
+    Asynchronously iterate through an iterable while calling a callback in before and/or each iteration.
 
     Parameters
     ------------
     iterable: :class:`Iterable`
         The iterable to iterator over.
-    callback: :class:`Callable[[], Coroutine]`
-        An async function that takes no arguments to call in between iterations.
-    before: :class:`bool`
-        Whether to call the callback before the iteration.
-    after: :class:`bool`
-        Whether to call the callback after the iteration.
+    before: Optional[``Callable[[], Any]``]
+        The optional callable for before the iteration.
+    after: Optional[``Callable[[], Any]``]
+        The optional callable for after the iteration.
+
+
+    .. note::
+        `before` and `after` must not take any parameters.
 
     Example
     ---------
@@ -90,7 +90,6 @@ def async_iter(
 
         import asyncio
         import functools
-
         import asyncify
 
         async def main():
@@ -99,4 +98,9 @@ def async_iter(
             async for number in async_iter([1, 2, 3], sleep, before=True):
                 print("%d seconds have passed." % number)
     """
+    return AsyncIterable(
+        iterable,
+        before=before,
+        after=after
+    )
 
