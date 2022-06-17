@@ -1,7 +1,7 @@
 from typing import (
     Any,
+    Awaitable,
     Callable,
-    Coroutine,
     Generator,
     Generic,
     Iterable,
@@ -26,8 +26,8 @@ class AsyncIterable(Generic[T]):
             self,
             iterable: Iterable[T],
             *,
-            before: Optional[Callable[[], Any]] = None,
-            after: Optional[Callable[[], Any]] = None
+            before: Optional[Callable[[], Awaitable]] = None,
+            after: Optional[Callable[[], Awaitable]] = None
     ):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
@@ -65,8 +65,8 @@ class AsyncIterable(Generic[T]):
 
 def async_iter(
         iterable: Iterable[T],
-        before: Optional[Callable[[], Any]] = None,
-        after: Optional[Callable[[], Any]] = None
+        before: Optional[Callable[[], Awaitable]] = None,
+        after: Optional[Callable[[], Awaitable]] = None
 ) -> AsyncIterable[T]:
     """
     Asynchronously iterate through an iterable while calling a callback in before and/or each iteration.
@@ -75,10 +75,10 @@ def async_iter(
     ------------
     iterable: :class:`Iterable`
         The iterable to iterator over.
-    before: Optional[``Callable[[], Any]``]
-        The optional callable for before the iteration.
-    after: Optional[``Callable[[], Any]``]
-        The optional callable for after the iteration.
+    before: Optional[``Callable[<no_parameters>, Awaitable]``]
+        The optional asynchronous callable for before the iteration.
+    after: Optional[``Callable[<no_parameters>, Awaitable]``]
+        The optional asynchronous callable for after the iteration.
 
 
     .. note::
