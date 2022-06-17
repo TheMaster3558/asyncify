@@ -88,14 +88,14 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
 
             loop = asyncio.get_event_loop()
             loop.run_until_complete(coroutine_func())
+
+    .. note::
+        There must be a running event loop.
         """
 
     @functools.wraps(func)
     def sync_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
+        loop = asyncio.get_running_loop()
         return loop.run_until_complete(func(*args, **kwargs))
 
     return sync_func
