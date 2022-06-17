@@ -1,22 +1,13 @@
-.. currentmodule:: asyncify
-
 Welcome to asyncify's documentation!
 ====================================
 
-.. autofunction:: asyncify.asyncify_func
+This python library to make things made for and with `asyncio`.
 
-|
 
-.. autofunction:: asyncify.asyncify_class
+Table of Contents
+-------------------
+.. toctree::
+  :maxdepth: 1
 
-|
-
-.. autofunction:: asyncify.syncify_func
-
-|
-
-.. autofunction:: asyncify.ignore
-
-|
-
-.. autofunction:: asyncify.async_iter
+  started.rst
+  api.rst
