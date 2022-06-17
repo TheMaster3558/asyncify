@@ -59,6 +59,8 @@ def asyncify_class(cls: TypeT) -> TypeT:
         async def main():
             await client.request('GET', 'https://python.org')
     """
+    if not inspect.isclass(cls):
+        raise TypeError('Expected class, not {!r}'.format(cls))
 
     for name, func in inspect.getmembers(cls):
         if not isinstance(

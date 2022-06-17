@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import functools
 
 from typing import TYPE_CHECKING, Any, Callable, Coroutine, TypeVar
@@ -50,6 +51,11 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
         This function uses the default loop executor.
         Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
     """
+    if inspect.iscoroutinefunction(func):
+        return func
+
+    if callable(func):
+        raise TypeError('Expected a callable function, not {!r}'.format(func))
 
     @functools.wraps(func)
     async def async_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
@@ -92,6 +98,11 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
     .. note::
         There must be a running event loop.
         """
+    if inspect.isfunction(func) and not inspect.iscoroutinefunction(func):
+        return func
+
+    if not callable(func):
+        raise TypeError('Expected a callable function, not {!r}'.format(func))
 
     @functools.wraps(func)
     def sync_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
