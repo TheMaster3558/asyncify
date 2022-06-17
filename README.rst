@@ -1,7 +1,7 @@
 Asyncify
 =========
 
-A python library to make things async!
+A python library to make things async for asyncio!
 
 
 Documentation
