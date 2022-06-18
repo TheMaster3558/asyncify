@@ -1,6 +1,6 @@
 import asyncio
 import sys
-from typing import Any, Coroutine, TypeVar
+from typing import Awaitable, TypeVar, Optional
 
 
 __all__ = (
@@ -14,7 +14,7 @@ T = TypeVar('T')
 if sys.version_info >= (3, 7) and 'sphinx' in sys.modules:
     from asyncio import run
 else:
-    def run(coro: Coroutine[Any, Any, T], *, debug: bool = False) -> T:
+    def run(main: Awaitable[T], *, debug: Optional[bool] = None) -> T:
         """
         An implementation of `asyncio.run <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20run#asyncio.run>`_
         for users below `Python 3.7`.
@@ -26,7 +26,7 @@ else:
 
         Parameters
         -----------
-        coro: ``Coroutine``
+        main: ``Coroutine``
             The coroutine to run.
         debug: :class:`bool`
             Whether to run the event loop in debug mode.
@@ -38,15 +38,17 @@ else:
         else:
             raise RuntimeError('Cannot call run() from a running event loop.')
 
-        if not asyncio.iscoroutine(coro):
-            raise TypeError('Expected coroutine, not {!r}'.format(coro))
+        if not asyncio.iscoroutine(main):
+            raise TypeError('Expected coroutine, not {!r}'.format(main))
 
         loop = asyncio.new_event_loop()
         try:
             asyncio.set_event_loop(loop)
-            loop.set_debug(debug)
 
-            return loop.run_until_complete(coro)
+            if debug is not None:
+                loop.set_debug(debug)
+
+            return loop.run_until_complete(main)
         finally:
             try:
                 tasks = asyncio.all_tasks(loop)

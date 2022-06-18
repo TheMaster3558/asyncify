@@ -1,6 +1,6 @@
 import inspect
 import types
-from typing import Callable, Tuple, TypeVar
+from typing import Callable, Tuple, Type, TypeVar
 
 from .func import asyncify_func
 
@@ -11,8 +11,8 @@ __all__ = (
 )
 
 
+T = TypeVar('T')
 CallableT = TypeVar('CallableT', bound=Callable)
-TypeT = TypeVar('TypeT', bound=type)
 
 
 function_types: Tuple[type, ...] = (
@@ -30,7 +30,7 @@ def ignore(func: CallableT) -> CallableT:
     return func
 
 
-def asyncify_class(cls: TypeT) -> TypeT:
+def asyncify_class(cls: Type[T]) -> Type[T]:
     """
     Turn a classes methods into async functions.
     This uses :func:`asyncify.asyncify_func`.

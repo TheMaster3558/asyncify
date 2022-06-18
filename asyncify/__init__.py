@@ -1,3 +1,5 @@
+# type: ignore
+
 from .cls import *
 from .func import *
 from .iterable import *

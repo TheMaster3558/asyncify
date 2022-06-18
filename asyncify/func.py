@@ -2,7 +2,7 @@ import asyncio
 import inspect
 import functools
 
-from typing import TYPE_CHECKING, Any, Callable, Coroutine, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, cast, Coroutine, TypeVar
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec
@@ -52,7 +52,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
         Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
     """
     if inspect.iscoroutinefunction(func):
-        return func
+        return cast("Callable[P, Coroutine[Any, Any, T]]", func)
 
     if callable(func):
         raise TypeError('Expected a callable function, not {!r}'.format(func))
