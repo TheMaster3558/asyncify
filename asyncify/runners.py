@@ -11,7 +11,7 @@ __all__ = (
 T = TypeVar('T')
 
 
-if sys.version_info >= (3, 7) and 'sphinx' in sys.modules:
+if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
     from asyncio import run
 else:
     def run(main: Awaitable[T], *, debug: Optional[bool] = None) -> T:
