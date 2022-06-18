@@ -96,7 +96,7 @@ def async_iter(
             sleep = functools.partial(asyncio.sleep, 1)
 
             async for number in async_iter([1, 2, 3], sleep, before=True):
-                print("%d seconds have passed." % number)
+                print('%d seconds have passed.' % number)
     """
     if not hasattr(iterable, '__iter__'):
         raise TypeError('Expected object with __iter__, not {!r}'.format(iterable))
