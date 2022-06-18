@@ -12,5 +12,8 @@ __all__ = (
 )
 
 
+__title__ = 'asyncify'
 __author__ = 'The Master'
+__license__ = 'MIT'
+__copyright__ = 'Copyright 2022-present The Master'
 __version__ = '1.1.0'
