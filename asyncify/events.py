@@ -37,12 +37,12 @@ class _ChangingEventLoopPolicyBaseMeta(type):
         cls.__bases__ = (policy_cls,)
 
 
-# without mypy says, error: Inconsistent metaclass structure for "AsyncifyEventLoopPolicy"
-class _ChangingEventLoopPolicy(metaclass=_ChangingEventLoopPolicyBaseMeta):
+# without this, mypy says, error: Inconsistent metaclass structure for "AsyncifyEventLoopPolicy"
+class _ChangingEventLoopBasePolicy(metaclass=_ChangingEventLoopPolicyBaseMeta):
     pass
 
 
-class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy, _ChangingEventLoopPolicy):
+class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy, _ChangingEventLoopBasePolicy):
     """
     Call a functions whenever certain things happen in asyncio!
     This is done using the event loop policy.
