@@ -24,3 +24,9 @@ API Reference
 |
 
 .. autofunction:: asyncify.run
+
+|
+
+.. autoclass:: asyncify.AsyncifyEventLoopPolicy
+  :members:
+  :inherited-members:
