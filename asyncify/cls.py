@@ -23,15 +23,17 @@ function_types: Tuple[type, ...] = (
 
 
 def ignore(func: CallableT) -> CallableT:
-    """
-    A decorator to ignore a function in a class when using :func:`asyncify.asyncify_class`.
+    """|deco|
+
+    Ignore a function in a class when using :func:`asyncify.asyncify_class`.
     """
     func._asyncify_ignore = True  # type: ignore
     return func
 
 
 def asyncify_class(cls: Type[T]) -> Type[T]:
-    """
+    """|deco|
+
     Turn a classes methods into async functions.
     This uses :func:`asyncify.asyncify_func`.
     This ignores methods marked with :func:`asyncify.ignore` and `dunder` methods.

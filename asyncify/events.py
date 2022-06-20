@@ -29,46 +29,10 @@ _valid_names: Tuple[str, ...] = (
 )
 
 
-class _ChangingEventLoopPolicyBaseMeta(type):
-    def change_base_policy(cls, policy_cls: Type[asyncio.AbstractEventLoopPolicy]):
-        if asyncio.AbstractEventLoop not in policy_cls.__bases__:
-            raise TypeError('policy_cls must inherited from asyncio.AbstractEventLoop')
-
-        cls.__bases__ = (policy_cls,)
-
-
-# without this, mypy says, error: Inconsistent metaclass structure for "AsyncifyEventLoopPolicy"
-class _ChangingEventLoopBasePolicy(metaclass=_ChangingEventLoopPolicyBaseMeta):
-    pass
-
-
-class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy, _ChangingEventLoopBasePolicy):
+class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
     """
     Call a functions whenever certain things happen in asyncio!
     This is done using the event loop policy.
-
-    .. note::
-        The actual things the event loop policy does are based on your platform.
-        The default base loop policy is
-        `asyncio.DefaultLoopPolicy <https://docs.python.org/3/library/asyncio-policy.html#asyncio.DefaultEventLoopPolicy>`_
-        but can be changed. This example uses `uvloop`.
-
-        .. code:: py
-
-            import asyncio
-            import asyncify
-            import uvloop
-
-            asyncify.AsyncifyEventLoopPolicy.change_base_policy(uvloop.EventLoopPolicy)
-
-            policy = asyncify.AsyncifyEventLoopPolicy()
-
-            @policy.event
-            def new_event_loop():
-                ...
-
-            loop = asyncio.new_event_loop()
-            print(loop)  # <uvloop.Loop running=False closed=False debug=False>
 
     Example
     ---------
@@ -94,13 +58,24 @@ class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy, _ChangingEventLoop
 
     .. warning::
         `asyncio.get_event_loop` won't call its event if there is a running and set event loop.
+
+    .. versionadded:: 1.1
     """
     def event(self, func: "Callable[P, Any]"):
-        """
+        """|deco|
+
         Register a function to be called when an event loop policy method is called.
         The name of the functions should match the event loop policy method.
         the valid names are ``get_event_loop``, ``set_event_loop``, ``new_event_loop``,
         ``get_child_watcher``, ``set_child_watcher``
+
+        Example
+        ---------
+        .. code:: py
+
+            @policy.event
+            def new_event_loop():
+                print('New event loop being created.')
 
         .. note::
             Using it multiple times on the same method will overwrite the old one.
@@ -126,3 +101,42 @@ class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy, _ChangingEventLoop
         setattr(self, old.__name__, updated)
 
         return updated
+
+    @classmethod
+    def change_base_policy(cls, policy_cls: Type[asyncio.AbstractEventLoopPolicy]):
+        """
+        The actual things the event loop policy does are based on your platform.
+        The default base loop policy is
+        `asyncio.DefaultLoopPolicy <https://docs.python.org/3/library/asyncio-policy.html#asyncio.DefaultEventLoopPolicy>`_
+        but can be changed.
+
+        Parameters
+        ------------
+        policy_cls: Type[:class:`asyncio.AbstractEventLoopPolicy`]
+            This class must inherit from
+            `asyncio.AbstractEventLoopPolicy <https://docs.python.org/3/library/asyncio-policy.html#asyncio.AbstractEventLoopPolicy>`_
+
+
+        This example uses `uvloop`.
+
+        .. code:: py
+
+            import asyncio
+            import asyncify
+            import uvloop
+
+            asyncify.AsyncifyEventLoopPolicy.change_base_policy(uvloop.EventLoopPolicy)
+
+            policy = asyncify.AsyncifyEventLoopPolicy()
+
+            @policy.event
+            def new_event_loop():
+                ...
+
+            loop = asyncio.new_event_loop()
+            print(loop)  # <uvloop.Loop running=False closed=False debug=False>
+        """
+        if asyncio.AbstractEventLoop not in policy_cls.__bases__:
+            raise TypeError('policy_cls must inherited from asyncio.AbstractEventLoopPolicy')
+
+        cls.__bases__ = (policy_cls,)

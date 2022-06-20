@@ -23,7 +23,8 @@ else:
 
 
 def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]]":
-    """
+    """|deco|
+
     Make a synchronous function into an asynchronous function by running it in a separate thread.
 
     Example
@@ -44,7 +45,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
             text = await get('https://python.org')
 
         # this is very useful to turn a blocking library into an async library
-        get = asyncify(requests.get)
+        get = asyncify.asyncify_func(requests.get)
     
     .. note::
     
@@ -68,7 +69,8 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
 
 
 def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]":
-    """
+    """|deco|
+
     Make an asynchronous function a synchronous function.
 
     Example

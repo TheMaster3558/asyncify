@@ -3,30 +3,32 @@
 API Reference
 ===============
 
-.. autofunction:: asyncify.asyncify_func
+.. autodecorator:: asyncify_func
 
 |
 
-.. autofunction:: asyncify.asyncify_class
+.. autodecorator:: asyncify_class
 
 |
 
-.. autofunction:: asyncify.syncify_func
+.. autodecorator:: syncify_func
 
 |
 
-.. autofunction:: asyncify.ignore
+.. autodecorator:: ignore
 
 |
 
-.. autofunction:: asyncify.async_iter
+.. autofunction:: async_iter
 
 |
 
-.. autofunction:: asyncify.run
+.. autofunction:: run
 
 |
 
-.. autoclass:: asyncify.AsyncifyEventLoopPolicy
+.. autoclass:: AsyncifyEventLoopPolicy
   :members:
-  :inherited-members:
+  :exclude-members: event
+
+  .. autodecorator:: asyncify.AsyncifyEventLoopPolicy.event()

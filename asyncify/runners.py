@@ -26,10 +26,13 @@ else:
 
         Parameters
         -----------
-        main: ``Coroutine``
+        main: ``Awaitable``
             The coroutine to run.
         debug: :class:`bool`
             Whether to run the event loop in debug mode.
+
+
+        .. versionadded:: 1.1
         """
         try:
             asyncio.get_running_loop()
