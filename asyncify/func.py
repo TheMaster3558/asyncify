@@ -6,12 +6,9 @@ from typing import TYPE_CHECKING, Any, Callable, cast, Coroutine, TypeVar
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec
-    
 
-__all__ = (
-    'asyncify_func',
-    'syncify_func'
-)
+
+__all__ = ('asyncify_func', 'syncify_func')
 
 
 T = TypeVar('T')
@@ -46,9 +43,9 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
 
         # this is very useful to turn a blocking library into an async library
         get = asyncify.asyncify_func(requests.get)
-    
+
     .. note::
-    
+
         This function uses the default loop executor.
         Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
     """
@@ -61,7 +58,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
     @functools.wraps(func)
     async def async_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
         new_func = functools.partial(func, *args, **kwargs)
-        
+
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, new_func)
 
@@ -99,7 +96,7 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
 
     .. note::
         There must be a running event loop.
-        """
+    """
     if inspect.isfunction(func) and not inspect.iscoroutinefunction(func):
         return func
 

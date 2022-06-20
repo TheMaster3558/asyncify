@@ -1,21 +1,7 @@
-from typing import (
-    Any,
-    Awaitable,
-    Callable,
-    Generator,
-    Generic,
-    Iterable,
-    Iterator,
-    List,
-    TypeVar,
-    Optional
-)
+from typing import Any, Awaitable, Callable, Generator, Generic, Iterable, Iterator, List, TypeVar, Optional
 
 
-__all__ = (
-    'AsyncIterable',
-    'async_iter'
-)
+__all__ = ('AsyncIterable', 'async_iter')
 
 
 T = TypeVar('T')
@@ -23,11 +9,11 @@ T = TypeVar('T')
 
 class AsyncIterable(Generic[T]):
     def __init__(
-            self,
-            iterable: Iterable[T],
-            *,
-            before: Optional[Callable[[], Awaitable]] = None,
-            after: Optional[Callable[[], Awaitable]] = None
+        self,
+        iterable: Iterable[T],
+        *,
+        before: Optional[Callable[[], Awaitable]] = None,
+        after: Optional[Callable[[], Awaitable]] = None
     ):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
@@ -64,9 +50,9 @@ class AsyncIterable(Generic[T]):
 
 
 def async_iter(
-        iterable: Iterable[T],
-        before: Optional[Callable[[], Awaitable]] = None,
-        after: Optional[Callable[[], Awaitable]] = None
+    iterable: Iterable[T],
+    before: Optional[Callable[[], Awaitable]] = None,
+    after: Optional[Callable[[], Awaitable]] = None,
 ) -> AsyncIterable[T]:
     """
     Asynchronously iterate through an iterable while calling a callback in before and/or each iteration.
@@ -101,9 +87,4 @@ def async_iter(
     if not hasattr(iterable, '__iter__'):
         raise TypeError('Expected object with __iter__, not {!r}'.format(iterable))
 
-    return AsyncIterable(
-        iterable,
-        before=before,
-        after=after
-    )
-
+    return AsyncIterable(iterable, before=before, after=after)

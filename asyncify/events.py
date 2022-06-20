@@ -7,9 +7,7 @@ if TYPE_CHECKING:
     from typing_extensions import ParamSpec
 
 
-__all__ = (
-    'EventsEventLoopPolicy',
-)
+__all__ = ('EventsEventLoopPolicy',)
 
 
 T = TypeVar('T')
@@ -25,7 +23,7 @@ _valid_names: Tuple[str, ...] = (
     'set_event_loop',
     'new_event_loop',
     'get_child_watcher',
-    'set_child_watcher'
+    'set_child_watcher',
 )
 
 
@@ -61,6 +59,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
     .. versionadded:: 1.1
     """
+
     def event(self, func: "Callable[P, Any]"):
         """|deco|
 
@@ -87,9 +86,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             raise RuntimeError('{!r} is not supported on windows.'.format(func.__name__))
 
         if func.__name__ not in _valid_names:
-            raise RuntimeError('{!r} is not a valid function name. {!r} are valid.'.format(
-                func.__name__, _valid_names)
-            )
+            raise RuntimeError('{!r} is not a valid function name. {!r} are valid.'.format(func.__name__, _valid_names))
 
         old: Callable[..., T] = getattr(super(), func.__name__)
 

@@ -7,13 +7,7 @@ from .iterable import *
 from .runners import *
 
 
-__all__ = (
-    cls.__all__ +
-    func.__all__ +
-    events.__all__ +
-    iterable.__all__ +
-    runners.__all__
-)
+__all__ = cls.__all__ + func.__all__ + events.__all__ + iterable.__all__ + runners.__all__
 
 __title__ = 'asyncify'
 __author__ = 'The Master'

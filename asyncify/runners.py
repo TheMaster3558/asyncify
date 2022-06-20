@@ -3,9 +3,7 @@ import sys
 from typing import Awaitable, TypeVar, Optional
 
 
-__all__ = (
-    'run',
-)
+__all__ = ('run',)
 
 
 T = TypeVar('T')
@@ -14,6 +12,7 @@ T = TypeVar('T')
 if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
     from asyncio import run
 else:
+
     def run(main: Awaitable[T], *, debug: Optional[bool] = None) -> T:
         """
         An implementation of `asyncio.run <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20run#asyncio.run>`_
@@ -59,19 +58,19 @@ else:
                 for task in tasks:
                     task.cancel()
 
-                loop.run_until_complete(
-                    asyncio.gather(*tasks, return_exceptions=True)
-                )
+                loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
 
                 for task in tasks:
                     if task.cancelled():
                         continue
                     if task.exception() is not None:
-                        loop.call_exception_handler({
-                            'message': 'unhandled exception during asyncio.run() shutdown',
-                            'exception': task.exception(),
-                            'task': task,
-                        })
+                        loop.call_exception_handler(
+                            {
+                                'message': 'unhandled exception during asyncio.run() shutdown',
+                                'exception': task.exception(),
+                                'task': task,
+                            }
+                        )
 
                 loop.run_until_complete(loop.shutdown_asyncgens())
             finally:
