@@ -35,7 +35,7 @@ class AsyncIterable(Generic[T]):
             await self.before()
 
         try:
-            item: T = next(self.iterator)
+            item = next(self.iterator)
         except StopIteration:
             self.iterator = None
             raise StopAsyncIteration
