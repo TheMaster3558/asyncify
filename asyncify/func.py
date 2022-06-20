@@ -55,7 +55,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
     if inspect.iscoroutinefunction(func):
         return cast("Callable[P, Coroutine[Any, Any, T]]", func)
 
-    if callable(func):
+    if not callable(func):
         raise TypeError('Expected a callable function, not {!r}'.format(func))
 
     @functools.wraps(func)
