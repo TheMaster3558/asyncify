@@ -12,7 +12,7 @@ T = TypeVar('T')
 CallableT = TypeVar('CallableT', bound=Callable)
 
 
-function_types: Tuple[type, ...] = (types.FunctionType, classmethod, staticmethod)
+_FUNCTION_TYPES: Tuple[type, ...] = (types.FunctionType, classmethod, staticmethod)
 
 
 def ignore(func: CallableT) -> CallableT:
@@ -58,7 +58,7 @@ def asyncify_class(cls: Type[T]) -> Type[T]:
         raise TypeError('Expected class, not {!r}'.format(cls))
 
     for name, func in inspect.getmembers(cls):
-        if not isinstance(func, function_types) or getattr(func, '_asyncify_ignore', False) or name.startswith('__'):
+        if not isinstance(func, _FUNCTION_TYPES) or getattr(func, '_asyncify_ignore', False) or name.startswith('__'):
             continue
 
         func = asyncify_func(func)
