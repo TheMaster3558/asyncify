@@ -27,8 +27,8 @@ API Reference
 
 |
 
-.. autoclass:: AsyncifyEventLoopPolicy
+.. autoclass:: EventsEventLoopPolicy
   :members:
   :exclude-members: event
 
-  .. autodecorator:: asyncify.AsyncifyEventLoopPolicy.event()
+  .. autodecorator:: asyncify.EventsEventLoopPolicy.event()

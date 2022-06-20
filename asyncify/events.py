@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    'AsyncifyEventLoopPolicy',
+    'EventsEventLoopPolicy',
 )
 
 
@@ -29,7 +29,7 @@ _valid_names: Tuple[str, ...] = (
 )
 
 
-class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
+class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
     """
     Call a functions whenever certain things happen in asyncio!
     This is done using the event loop policy.
@@ -41,7 +41,7 @@ class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         import asyncio
         import asyncify
 
-        policy = asyncify.AsyncifyEventLoopPolicy()
+        policy = asyncify.EventsEventLoopPolicy()
 
         @policy.event
         def new_event_loop():
@@ -125,9 +125,9 @@ class AsyncifyEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             import asyncify
             import uvloop
 
-            asyncify.AsyncifyEventLoopPolicy.change_base_policy(uvloop.EventLoopPolicy)
+            asyncify.EventsEventLoopPolicy.change_base_policy(uvloop.EventLoopPolicy)
 
-            policy = asyncify.AsyncifyEventLoopPolicy()
+            policy = asyncify.EventsEventLoopPolicy()
 
             @policy.event
             def new_event_loop():
