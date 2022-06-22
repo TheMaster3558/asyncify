@@ -44,15 +44,14 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
         # this is very useful to turn a blocking library into an async library
         get = asyncify.asyncify_func(requests.get)
 
+    .. note::
+        This function uses the default loop executor.
+        Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
+
     Raises
     -------
     TypeError
         The object passed in was not a function.
-
-    .. note::
-
-        This function uses the default loop executor.
-        Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
     """
     if inspect.iscoroutinefunction(func):
         return cast("Callable[P, Coroutine[Any, Any, T]]", func)
@@ -99,13 +98,14 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
             loop = asyncio.get_event_loop()
             loop.run_until_complete(coroutine_func())
 
+    .. note::
+        There must be a running event loop.
+
     Raises
     -------
     TypeError
         The object passed was not a coroutine function.
 
-    .. note::
-        There must be a running event loop.
     """
     if inspect.isfunction(func) and not inspect.iscoroutinefunction(func):
         return func

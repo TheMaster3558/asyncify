@@ -76,13 +76,13 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             def new_event_loop():
                 print('New event loop being created.')
 
+        .. note::
+            Using it multiple times on the same method will overwrite the old one.
+
         Raises
         -------
         RuntimeError
             The name either is invalid or is not supported on Windows.
-
-        .. note::
-            Using it multiple times on the same method will overwrite the old one.
         """
         if not callable(func):
             raise TypeError('Expected a callable function, not {!r}'.format(func))

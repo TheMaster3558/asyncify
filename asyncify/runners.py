@@ -39,6 +39,7 @@ else:
         TypeError
             The object passed is not awaitable.
 
+
         .. versionadded:: 1.1
         """
         try:
