@@ -55,7 +55,7 @@ def async_iter(
     after: Optional[Callable[[], Awaitable]] = None,
 ) -> AsyncIterable[T]:
     """
-    Asynchronously iterate through an iterable while calling a callback in before and/or each iteration.
+    Asynchronously iterate through an iterable while calling an async callback before and/or after each iteration.
 
     Parameters
     ------------
