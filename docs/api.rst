@@ -3,11 +3,9 @@
 API Reference
 ===============
 
+Functions
+----------
 .. autodecorator:: asyncify_func
-
-|
-
-.. autodecorator:: asyncify_class
 
 |
 
@@ -15,18 +13,30 @@ API Reference
 
 |
 
+Classes
+--------
+.. autodecorator:: asyncify_class
+
+|
+
 .. autodecorator:: ignore
 
 |
 
+Iterables
+----------
 .. autofunction:: async_iter
 
 |
 
+Runners
+--------
 .. autofunction:: run
 
 |
 
+Events
+--------
 .. autoclass:: EventsEventLoopPolicy
   :members:
   :exclude-members: event

@@ -98,7 +98,7 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
             loop = asyncio.get_event_loop()
             loop.run_until_complete(coroutine_func())
 
-    .. note::
+    .. warning::
         There must be a running event loop.
 
     Raises
