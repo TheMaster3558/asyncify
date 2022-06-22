@@ -24,6 +24,9 @@ class AsyncIterable(Generic[T]):
     def __await__(self) -> Generator[Any, Any, List[T]]:
         return self.flatten().__await__()
 
+    def __iter__(self):
+        raise TypeError(f'{self.__class__.__name__!r} object is not iterable, use async for instead.')
+
     def __aiter__(self):
         self.iterator = iter(self.iterable)
         return self
