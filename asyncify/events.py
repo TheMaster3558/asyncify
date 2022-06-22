@@ -60,7 +60,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
     .. versionadded:: 1.1
     """
 
-    def event(self, func: "Callable[P, Any]"):
+    def event(self, func: "Callable[P, Any]") -> "Callable[P, T]":
         """|deco|
 
         Register a function to be called when an event loop policy method is called.
@@ -100,7 +100,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         return updated
 
     @classmethod
-    def change_base_policy(cls, policy_cls: Type[asyncio.AbstractEventLoopPolicy]):
+    def change_base_policy(cls, policy_cls: Type[asyncio.AbstractEventLoopPolicy]) -> None:
         """
         The actual things the event loop policy does are based on your platform.
         The default base loop policy is
