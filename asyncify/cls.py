@@ -53,6 +53,11 @@ def asyncify_class(cls: Type[T]) -> Type[T]:
 
         async def main():
             await client.request('GET', 'https://python.org')
+
+    Raises
+    -------
+    TypeError
+        The object passed was not a class.
     """
     if not inspect.isclass(cls):
         raise TypeError('Expected class, not {!r}'.format(cls))

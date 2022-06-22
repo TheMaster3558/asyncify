@@ -83,6 +83,11 @@ def async_iter(
 
             async for number in async_iter([1, 2, 3], sleep, before=True):
                 print('%d seconds have passed.' % number)
+
+    Raises
+    -------
+    TypeError
+        The object passed was not an iterable.
     """
     if not hasattr(iterable, '__iter__'):
         raise TypeError('Expected object with __iter__, not {!r}'.format(iterable))

@@ -76,6 +76,11 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             def new_event_loop():
                 print('New event loop being created.')
 
+        Raises
+        -------
+        RuntimeError
+            The name either is invalid or is not supported on Windows.
+
         .. note::
             Using it multiple times on the same method will overwrite the old one.
         """
@@ -116,6 +121,8 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
         This example uses `uvloop`.
 
+        Example
+        --------
         .. code:: py
 
             import asyncio
@@ -132,6 +139,11 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
             loop = asyncio.new_event_loop()
             print(loop)  # <uvloop.Loop running=False closed=False debug=False>
+
+        Raises
+        -------
+        TypeError
+            `policy_cls` does not inherit from `asyncio.AbstractEventLoopPolicy`.
         """
         if asyncio.AbstractEventLoop not in policy_cls.__bases__:
             raise TypeError('policy_cls must inherited from asyncio.AbstractEventLoopPolicy')

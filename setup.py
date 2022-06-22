@@ -14,9 +14,7 @@ with open('README.rst', 'r') as rm:
     readme = rm.read()
 
 
-packages = [
-    'asyncify'
-]
+packages = ['asyncify']
 
 
 setup(
@@ -28,7 +26,7 @@ setup(
     description='A python library to make things async!',
     project_urls={
         'GitHub': 'https://github.com/chawkk6404/asyncify',
-        'Documentation': 'https://asyncify.readthedocs.io/en/latest'
+        'Documentation': 'https://asyncify.readthedocs.io/en/latest',
     },
     long_description=readme,
     long_description_content_type='text/x-rst',
@@ -52,5 +50,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities',
         'Typing :: Typed',
-    ]
+    ],
 )

@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import sys
 from typing import Awaitable, TypeVar, Optional
 
@@ -31,6 +32,13 @@ else:
             Whether to run the event loop in debug mode.
 
 
+        Raises
+        -------
+        RuntimeError
+            There is already a running event loop.
+        TypeError
+            The object passed is not awaitable.
+
         .. versionadded:: 1.1
         """
         try:
@@ -40,8 +48,8 @@ else:
         else:
             raise RuntimeError('Cannot call run() from a running event loop.')
 
-        if not asyncio.iscoroutine(main):
-            raise TypeError('Expected coroutine, not {!r}'.format(main))
+        if not inspect.isawaitable(main):
+            raise TypeError('Expected awaitable, not {!r}'.format(main))
 
         loop = asyncio.new_event_loop()
         try:
