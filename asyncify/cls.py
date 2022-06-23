@@ -1,6 +1,6 @@
 import inspect
 import types
-from typing import Callable, Tuple, Type, TypeVar
+from typing import Any, Callable, Tuple, Type, TypeVar
 
 from .func import asyncify_func
 
@@ -9,10 +9,10 @@ __all__ = ('asyncify_class', 'ignore')
 
 
 T = TypeVar('T')
-CallableT = TypeVar('CallableT', bound=Callable)
+CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 
 
-_FUNCTION_TYPES: Tuple[type, ...] = (types.FunctionType, classmethod, staticmethod)
+_FUNCTION_TYPES: Tuple[Type[Any], ...] = (types.FunctionType, classmethod, staticmethod)
 
 
 def ignore(func: CallableT) -> CallableT:
@@ -20,7 +20,7 @@ def ignore(func: CallableT) -> CallableT:
 
     Ignore a function in a class when using :func:`asyncify.asyncify_class`.
     """
-    func._asyncify_ignore = True  # type: ignore
+    func._asyncify_ignore = True
     return func
 
 

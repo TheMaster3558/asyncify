@@ -12,8 +12,8 @@ class AsyncIterable(Generic[T]):
         self,
         iterable: Iterable[T],
         *,
-        before: Optional[Callable[[], Awaitable]] = None,
-        after: Optional[Callable[[], Awaitable]] = None,
+        before: Optional[Callable[[], Awaitable[Any]]] = None,
+        after: Optional[Callable[[], Awaitable[Any]]] = None,
     ):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
@@ -54,8 +54,8 @@ class AsyncIterable(Generic[T]):
 
 def async_iter(
     iterable: Iterable[T],
-    before: Optional[Callable[[], Awaitable]] = None,
-    after: Optional[Callable[[], Awaitable]] = None,
+    before: Optional[Callable[[], Awaitable[Any]]] = None,
+    after: Optional[Callable[[], Awaitable[Any]]] = None,
 ) -> AsyncIterable[T]:
     """
     Asynchronously iterate through an iterable while calling an async callback before and/or after each iteration.

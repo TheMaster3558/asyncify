@@ -20,5 +20,6 @@ exclude = [
     "docs"
 ]
 reportUnnecessaryTypeIgnoreComment = "warning"
-pythonVersion = "3.6"
-typeCheckingMode = "strict"
+reportUnknownVariableType = "information"
+pythonVersion = "3.10"
+typeCheckingMode = "basic"

@@ -2,7 +2,7 @@ import asyncio
 import inspect
 import functools
 
-from typing import TYPE_CHECKING, Any, Callable, cast, Coroutine, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Coroutine, TypeVar
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec
