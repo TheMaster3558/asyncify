@@ -10,6 +10,7 @@ __all__ = ('asyncify_class', 'ignore')
 
 T = TypeVar('T')
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
+TypeT = TypeVar('TypeT', bound=Type[Any])
 
 
 _FUNCTION_TYPES: Tuple[Type[Any], ...] = (types.FunctionType,)
@@ -24,7 +25,7 @@ def ignore(func: CallableT) -> CallableT:
     return func
 
 
-def asyncify_class(cls: Type[T]) -> Type[T]:
+def asyncify_class(cls: TypeT) -> TypeT:
     """|deco|
 
     Turn a classes methods into async functions.
@@ -69,4 +70,4 @@ def asyncify_class(cls: Type[T]) -> Type[T]:
         func = asyncify_func(func)
         setattr(cls, name, func)
 
-    return cls
+    return cls  # type: ignore

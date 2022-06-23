@@ -61,7 +61,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
     .. versionadded:: 1.1
     """
 
-    def event(self, func: "Callable[P, Any]") -> "Callable[P, T]":
+    def event(self, func: "Callable[P, T]") -> "Callable[P, T]":
         """|deco|
 
         Register a function to be called when an event loop policy method is called.
@@ -94,16 +94,32 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         if func.__name__ not in _valid_names:
             raise RuntimeError('{!r} is not a valid function name. {!r} are valid.'.format(func.__name__, _valid_names))
 
-        old: Callable[..., T] = getattr(super(), func.__name__)
+        old: Callable[..., Any] = getattr(super(), func.__name__)
+
+        # Explanation for two functions
+        # -----------------------------
+        # call_old
+        # If a user wants to call the function, they will get the return value the function passed in
+        # instead of the return value of the original functions
+        #
+        # retain_inner_return
+        # The event loop policy still needs to properly return the correct types
+        # so it returns the original functions return value
+        
+        @functools.wraps(func)
+        def call_old(*args: "P.args", **kwargs: "P.kwargs") -> T:
+            ret = func(*args, **kwargs)
+            old(*args, **kwargs)
+            return ret
 
         @functools.wraps(old)
-        def updated(*args: "P.args", **kwargs: "P.kwargs") -> T:
+        def retain_inner_return(*args: "P.args", **kwargs: "P.kwargs") -> Any:
             func(*args, **kwargs)
             return old(*args, **kwargs)
 
-        setattr(self, old.__name__, updated)
+        setattr(self, old.__name__, retain_inner_return)
 
-        return updated
+        return call_old
 
     @classmethod
     def change_base_policy(cls, policy_cls: Type[asyncio.AbstractEventLoopPolicy]) -> None:
