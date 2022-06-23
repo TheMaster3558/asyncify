@@ -43,7 +43,7 @@ class AsyncIterable(Generic[T]):
     def __iter__(self) -> NoReturn:
         raise TypeError(f'{self.__class__.__name__!r} object is not iterable, use async for instead.')
 
-    def __aiter__(self) -> Self:
+    def __aiter__(self) -> "Self":
         self.iterator = iter(self.iterable)
         return self
 
