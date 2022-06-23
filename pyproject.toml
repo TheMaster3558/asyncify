@@ -8,3 +8,17 @@ build-backend = "setuptools.build_meta"
 [tool.black]
 line-length = 120
 skip-string-normalization = true
+
+
+[tool.pyright]
+include = [
+    "asyncify"
+]
+exclude = [
+    "**/__pycache__",
+    "dist",
+    "docs"
+]
+reportUnnecessaryTypeIgnoreComment = "warning"
+pythonVersion = "3.5"
+typeCheckingMode = "strict"
