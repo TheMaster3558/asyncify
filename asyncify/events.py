@@ -105,7 +105,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         # retain_inner_return
         # The event loop policy still needs to properly return the correct types
         # so it returns the original functions return value
-        
+
         @functools.wraps(func)
         def call_old(*args: "P.args", **kwargs: "P.kwargs") -> T:
             ret = func(*args, **kwargs)

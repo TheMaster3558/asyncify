@@ -1,4 +1,17 @@
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Generic, Iterable, Iterator, List, NoReturn, TypeVar, Optional
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    Generator,
+    Generic,
+    Iterable,
+    Iterator,
+    List,
+    NoReturn,
+    TypeVar,
+    Optional,
+)
 
 if TYPE_CHECKING:
     from typing_extensions import Self

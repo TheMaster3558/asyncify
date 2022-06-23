@@ -17,11 +17,7 @@ with open('README.rst', 'r') as rm:
 packages = ['asyncify']
 
 
-extras_require = {
-    'docs': [
-        'sphinx-press-theme'
-    ]
-}
+extras_require = {'docs': ['sphinx-press-theme']}
 
 
 setup(
