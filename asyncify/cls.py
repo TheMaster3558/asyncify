@@ -21,7 +21,7 @@ def ignore(func: CallableT) -> CallableT:
 
     Ignore a function in a class when using :func:`asyncify.asyncify_class`.
     """
-    func._asyncify_ignore = True
+    func._asyncify_ignore = True  # type: ignore # we are assigning new attribute here
     return func
 
 

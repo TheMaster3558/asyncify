@@ -22,4 +22,4 @@ exclude = [
 reportUnnecessaryTypeIgnoreComment = "warning"
 reportUnknownVariableType = "information"
 pythonVersion = "3.10"
-typeCheckingMode = "basic"
+typeCheckingMode = "strict"

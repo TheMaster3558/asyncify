@@ -1,4 +1,7 @@
-from typing import Any, Awaitable, Callable, Generator, Generic, Iterable, Iterator, List, TypeVar, Optional
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Generic, Iterable, Iterator, List, NoReturn, TypeVar, Optional
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 __all__ = ('AsyncIterable', 'async_iter')
@@ -24,10 +27,10 @@ class AsyncIterable(Generic[T]):
     def __await__(self) -> Generator[Any, Any, List[T]]:
         return self.flatten().__await__()
 
-    def __iter__(self):
+    def __iter__(self) -> NoReturn:
         raise TypeError(f'{self.__class__.__name__!r} object is not iterable, use async for instead.')
 
-    def __aiter__(self):
+    def __aiter__(self) -> Self:
         self.iterator = iter(self.iterable)
         return self
 
