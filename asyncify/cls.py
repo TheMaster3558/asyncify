@@ -12,7 +12,7 @@ T = TypeVar('T')
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 
 
-_FUNCTION_TYPES: Tuple[Type[Any], ...] = (types.FunctionType, classmethod, staticmethod)
+_FUNCTION_TYPES: Tuple[Type[Any], ...] = (types.FunctionType,)
 
 
 def ignore(func: CallableT) -> CallableT:
