@@ -13,7 +13,7 @@ class AsyncIterable(Generic[T]):
         iterable: Iterable[T],
         *,
         before: Optional[Callable[[], Awaitable]] = None,
-        after: Optional[Callable[[], Awaitable]] = None
+        after: Optional[Callable[[], Awaitable]] = None,
     ):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
