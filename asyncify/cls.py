@@ -70,4 +70,4 @@ def asyncify_class(cls: TypeT) -> TypeT:
         func = asyncify_func(func)
         setattr(cls, name, func)
 
-    return cls  # type: ignore
+    return cls  # type: ignore # inspect.isclass changes type of `cls` from `TypeT` to `type`
