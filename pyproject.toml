@@ -20,5 +20,5 @@ exclude = [
     "docs"
 ]
 reportUnnecessaryTypeIgnoreComment = "warning"
-pythonVersion = "3.5"
+pythonVersion = "3.6"
 typeCheckingMode = "strict"
