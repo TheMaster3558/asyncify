@@ -53,9 +53,6 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
     TypeError
         The object passed in was not a function.
     """
-    if inspect.iscoroutinefunction(func):
-        return cast("Callable[P, Coroutine[Any, Any, T]]", func)
-
     if not inspect.isfunction(func):
         raise TypeError('Expected a callable function, not {!r}'.format(func))
 
@@ -107,9 +104,6 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
         The object passed was not a coroutine function.
 
     """
-    if inspect.isfunction(func) and not inspect.iscoroutinefunction(func):
-        return func
-
     if not inspect.isfunction(func):
         raise TypeError('Expected a callable function, not {!r}'.format(func))
 
