@@ -1,6 +1,5 @@
 import inspect
-import types
-from typing import Any, Callable, Tuple, Type, TypeVar
+from typing import Any, Callable, Type, TypeVar
 
 from .func import asyncify_func
 
@@ -8,12 +7,8 @@ from .func import asyncify_func
 __all__ = ('asyncify_class', 'ignore')
 
 
-T = TypeVar('T')
 CallableT = TypeVar('CallableT', bound=Callable[..., Any])
 TypeT = TypeVar('TypeT', bound=Type[Any])
-
-
-_FUNCTION_TYPES: Tuple[Type[Any], ...] = (types.FunctionType,)
 
 
 def ignore(func: CallableT) -> CallableT:
@@ -64,7 +59,7 @@ def asyncify_class(cls: TypeT) -> TypeT:
         raise TypeError('Expected class, not {!r}'.format(cls))
 
     for name, func in inspect.getmembers(cls):
-        if not isinstance(func, _FUNCTION_TYPES) or getattr(func, '_asyncify_ignore', False) or name.startswith('__'):
+        if not inspect.isfunction(func) or getattr(func, '_asyncify_ignore', False) or name.startswith('__'):
             continue
 
         func = asyncify_func(func)

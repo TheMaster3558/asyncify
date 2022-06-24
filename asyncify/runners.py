@@ -1,7 +1,7 @@
 import asyncio
 import inspect
 import sys
-from typing import Any, Coroutine, TypeVar, Optional
+from typing import Any, Coroutine, TypeVar
 
 
 __all__ = ('run',)
@@ -14,7 +14,7 @@ if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
     from asyncio import run
 else:
 
-    def run(main: Coroutine[Any, Any, T], *, debug: Optional[bool] = None) -> T:
+    def run(main: Coroutine[Any, Any, T], *, debug: bool = False) -> T:
         """
         An implementation of `asyncio.run <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20run#asyncio.run>`_
         for users below `Python 3.7`.
