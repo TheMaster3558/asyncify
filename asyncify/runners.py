@@ -1,5 +1,4 @@
 import asyncio
-import inspect
 import sys
 from typing import Any, Coroutine, TypeVar
 
@@ -26,7 +25,7 @@ else:
 
         Parameters
         -----------
-        main: ``Awaitable``
+        main: ``Coroutine``
             The coroutine to run.
         debug: :class:`bool`
             Whether to run the event loop in debug mode.
@@ -37,7 +36,7 @@ else:
         RuntimeError
             There is already a running event loop.
         TypeError
-            The object passed is not awaitable.
+            The object passed is not a coroutine.
 
 
         .. versionadded:: 1.1
@@ -49,7 +48,7 @@ else:
         else:
             raise RuntimeError('Cannot call run() from a running event loop.')
 
-        if not inspect.isawaitable(main):
+        if not asyncio.iscoroutine(main):
             raise TypeError('Expected awaitable, not {!r}'.format(main))
 
         loop = asyncio.new_event_loop()
