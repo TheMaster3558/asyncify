@@ -1,8 +1,9 @@
 import asyncio
 import sys
-from typing import TYPE_CHECKING, Any, Coroutine, TypeVar, Optional
+from typing import TYPE_CHECKING, Any, Coroutine, Type, TypeVar, Optional
 
 if TYPE_CHECKING:
+    from types import TracebackType
     from typing_extensions import Self
 
 
@@ -11,6 +12,8 @@ __all__ = ('run', 'Runner')
 
 T = TypeVar('T')
 
+_MISSING: Any = object()
+
 
 if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
     from asyncio import run
@@ -18,14 +21,19 @@ if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
 else:
     class Runner:
         def __init__(self, debug: bool = False):
-            self.loop: Optional[asyncio.AbstractEventLoop] = None
+            self.loop: asyncio.AbstractEventLoop = _MISSING
             self.debug = debug
 
         def __enter__(self) -> Self:
             self._init(debug=self.debug)
             return self
 
-        def __exit__(self, exc_type, exc_val, exc_tb):
+        def __exit__(
+            self,
+            exc_type: Optional[Type[BaseException]],
+            exc_value: Optional[BaseException],
+            traceback: Optional[TracebackType]
+        ) -> None:
             self.close()
 
         def run(self, main: Coroutine[Any, Any, T]) -> T:
@@ -33,13 +41,13 @@ else:
                 raise RuntimeError('Runner incorrectly initialized.')
             return self.loop.run_until_complete(main)
 
-        def close(self):
+        def close(self) -> None:
             try:
                 self._cancel_tasks()
                 self.loop.run_until_complete(self.loop.shutdown_asyncgens())
             finally:
                 self.loop.close()
-                self.loop = None
+                self.loop = _MISSING
                 asyncio.set_event_loop(self.loop)
 
         def _init(self, debug: bool = False) -> None:
@@ -50,7 +58,7 @@ else:
 
             self.loop.set_debug(debug)
 
-        def _cancel_tasks(self):
+        def _cancel_tasks(self) -> None:
             tasks = asyncio.all_tasks(self.loop)
 
             for task in tasks:
