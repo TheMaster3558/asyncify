@@ -60,7 +60,7 @@ def asyncify_class(cls: TypeT) -> TypeT:
     TypeError
         The object passed was not a class.
     """
-    if not inspect.isclass(cls):
+    if not isinstance(cls, Type):
         raise TypeError('Expected class, not {!r}'.format(cls))
 
     for name, func in inspect.getmembers(cls):
@@ -70,4 +70,4 @@ def asyncify_class(cls: TypeT) -> TypeT:
         func = asyncify_func(func)
         setattr(cls, name, func)
 
-    return cls  # type: ignore # inspect.isclass changes type of `cls` from `TypeT` to `type`
+    return cls
