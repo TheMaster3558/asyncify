@@ -1,17 +1,16 @@
 import inspect
-from typing import Any, Callable, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Type, TypeVar
 
 from .func import asyncify_func
+
+if TYPE_CHECKING:
+    from ._types import CallableT, TypeT
 
 
 __all__ = ('asyncify_class', 'ignore')
 
 
-CallableT = TypeVar('CallableT', bound=Callable[..., Any])
-TypeT = TypeVar('TypeT', bound=Type[Any])
-
-
-def ignore(func: CallableT) -> CallableT:
+def ignore(func: "CallableT") -> "CallableT":
     """|deco|
 
     Ignore a function in a class when using :func:`asyncify.asyncify_class`.
@@ -20,7 +19,7 @@ def ignore(func: CallableT) -> CallableT:
     return func
 
 
-def asyncify_class(cls: TypeT) -> TypeT:
+def asyncify_class(cls: "TypeT") -> "TypeT":
     """|deco|
 
     Turn a classes methods into async functions.

@@ -1,8 +1,6 @@
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
-    Callable,
     Generator,
     Generic,
     Iterable,
@@ -15,6 +13,7 @@ from typing import (
 
 if TYPE_CHECKING:
     from typing_extensions import Self
+    from ._types import NoArgAwaitable
 
 
 __all__ = ('AsyncIterable', 'async_iter')
@@ -28,8 +27,8 @@ class AsyncIterable(Generic[T]):
         self,
         iterable: Iterable[T],
         *,
-        before: Optional[Callable[[], Awaitable[Any]]] = None,
-        after: Optional[Callable[[], Awaitable[Any]]] = None,
+        before: "NoArgAwaitable[Any]" = None,
+        after: "NoArgAwaitable[Any]" = None,
     ):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
@@ -70,8 +69,8 @@ class AsyncIterable(Generic[T]):
 
 def async_iter(
     iterable: Iterable[T],
-    before: Optional[Callable[[], Awaitable[Any]]] = None,
-    after: Optional[Callable[[], Awaitable[Any]]] = None,
+    before: "NoArgAwaitable[Any]" = None,
+    after: "NoArgAwaitable[Any]" = None,
 ) -> AsyncIterable[T]:
     """
     Asynchronously iterate through an iterable while calling an async callback before and/or after each iteration.
@@ -80,9 +79,9 @@ def async_iter(
     ------------
     iterable: :class:`Iterable`
         The iterable to iterator over.
-    before: Optional[``Callable[<no_parameters>, Awaitable]``]
+    before: Optional[``Callable[<no_parameters>, Awaitable[Any]]``]
         The optional asynchronous callable for before the iteration.
-    after: Optional[``Callable[<no_parameters>, Awaitable]``]
+    after: Optional[``Callable[<no_parameters>, Awaitable[Any]]``]
         The optional asynchronous callable for after the iteration.
 
 
@@ -109,6 +108,6 @@ def async_iter(
         The object passed was not an iterable.
     """
     if not hasattr(iterable, '__iter__'):
-        raise TypeError('Expected object with __iter__, not {!r}'.format(iterable))
+        raise TypeError('Expected iterable object, not {!r}'.format(iterable))
 
     return AsyncIterable(iterable, before=before, after=after)

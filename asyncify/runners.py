@@ -1,10 +1,11 @@
 import asyncio
 import sys
-from typing import TYPE_CHECKING, Any, Coroutine, Type, TypeVar, Optional
+from typing import TYPE_CHECKING, Any, Type, TypeVar, Optional
 
 if TYPE_CHECKING:
     from types import TracebackType
     from typing_extensions import Self
+    from ._types import Coro
 
 
 __all__ = ('run', 'Runner')
@@ -36,7 +37,7 @@ else:
         ) -> None:
             self.close()
 
-        def run(self, main: Coroutine[Any, Any, T]) -> T:
+        def run(self, main: "Coro[T]") -> T:
             if self.loop is None:
                 raise RuntimeError('Runner incorrectly initialized.')
             return self.loop.run_until_complete(main)
@@ -78,7 +79,7 @@ else:
                         }
                     )
 
-    def run(main: Coroutine[Any, Any, T], *, debug: bool = False) -> T:
+    def run(main: "Coro[T]", *, debug: bool = False) -> T:
         """
         An implementation of `asyncio.run <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20run#asyncio.run>`_
         for users below `Python 3.7`.
