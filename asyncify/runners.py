@@ -1,9 +1,12 @@
 import asyncio
 import sys
-from typing import Any, Coroutine, TypeVar
+from typing import TYPE_CHECKING, Any, Coroutine, TypeVar, Optional
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
-__all__ = ('run',)
+__all__ = ('run', 'Runner')
 
 
 T = TypeVar('T')
@@ -11,7 +14,61 @@ T = TypeVar('T')
 
 if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
     from asyncio import run
+
 else:
+    class Runner:
+        def __init__(self, debug: bool = False):
+            self.loop: Optional[asyncio.AbstractEventLoop] = None
+            self.debug = debug
+
+        def __enter__(self) -> Self:
+            self._init(debug=self.debug)
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.close()
+
+        def run(self, main: Coroutine[Any, Any, T]) -> T:
+            if self.loop is None:
+                raise RuntimeError('Runner incorrectly initialized.')
+            return self.loop.run_until_complete(main)
+
+        def close(self):
+            try:
+                self._cancel_tasks()
+                self.loop.run_until_complete(self.loop.shutdown_asyncgens())
+            finally:
+                self.loop.close()
+                self.loop = None
+                asyncio.set_event_loop(self.loop)
+
+        def _init(self, debug: bool = False) -> None:
+            _check_loop()
+
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
+
+            self.loop.set_debug(debug)
+
+        def _cancel_tasks(self):
+            tasks = asyncio.all_tasks(self.loop)
+
+            for task in tasks:
+                task.cancel()
+
+            self.loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
+
+            for task in tasks:
+                if task.cancelled():
+                    continue
+                if task.exception() is not None:
+                    self.loop.call_exception_handler(
+                        {
+                            'message': 'unhandled exception during asyncio.run() shutdown',
+                            'exception': task.exception(),
+                            'task': task,
+                        }
+                    )
 
     def run(main: Coroutine[Any, Any, T], *, debug: bool = False) -> T:
         """
@@ -41,46 +98,14 @@ else:
 
         .. versionadded:: 1.1
         """
-        try:
-            asyncio.get_running_loop()
-        except RuntimeError:
-            pass
-        else:
-            raise RuntimeError('Cannot call run() from a running event loop.')
+        with Runner(debug=debug) as runner:
+            return runner.run(main)
 
-        if not asyncio.iscoroutine(main):
-            raise TypeError('Expected awaitable, not {!r}'.format(main))
 
-        loop = asyncio.new_event_loop()
-        try:
-            asyncio.set_event_loop(loop)
-
-            if debug is not None:
-                loop.set_debug(debug)
-
-            return loop.run_until_complete(main)
-        finally:
-            try:
-                tasks = asyncio.all_tasks(loop)
-
-                for task in tasks:
-                    task.cancel()
-
-                loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
-
-                for task in tasks:
-                    if task.cancelled():
-                        continue
-                    if task.exception() is not None:
-                        loop.call_exception_handler(
-                            {
-                                'message': 'unhandled exception during asyncio.run() shutdown',
-                                'exception': task.exception(),
-                                'task': task,
-                            }
-                        )
-
-                loop.run_until_complete(loop.shutdown_asyncgens())
-            finally:
-                asyncio.set_event_loop(None)
-                loop.close()
+def _check_loop() -> None:
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError('Cannot call run() from a running event loop.')
