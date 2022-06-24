@@ -1,6 +1,5 @@
 import asyncio
 import functools
-import inspect
 import sys
 from typing import TYPE_CHECKING, Any, Callable, Tuple, Type, TypeVar
 
@@ -19,12 +18,17 @@ else:
     P = TypeVar('P')
 
 
+_UNIX_ONLY_NAMES: Tuple[str, ...] = (
+    'get_child_watcher',
+    'set_child_watcher'
+)
+
 _VALID_NAMES: Tuple[str, ...] = (
     'get_event_loop',
     'set_event_loop',
     'new_event_loop',
     'get_child_watcher',
-    'set_child_watcher',
+    'set_child_watcher'
 )
 
 
@@ -85,10 +89,10 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         RuntimeError
             The name either is invalid or is not supported on Windows.
         """
-        if not inspect.isfunction(func):
-            raise TypeError('Expected a callable function, not {!r}'.format(func))
+        if not isinstance(func, Callable):
+            raise TypeError('Expected a callable, not {!r}'.format(func))
 
-        if sys.platform == 'win32' and func.__name__ in ('get_child_watcher', 'set_child_watcher'):
+        if sys.platform == 'win32' and func.__name__ in _UNIX_ONLY_NAMES:
             raise RuntimeError('{!r} is not supported on windows.'.format(func.__name__))
 
         if func.__name__ not in _VALID_NAMES:
@@ -149,4 +153,4 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         if asyncio.AbstractEventLoop not in policy_cls.__bases__:
             raise TypeError('policy_cls must inherited from asyncio.AbstractEventLoopPolicy')
 
-        cls.__bases__ = (policy_cls,)
+        cls.__bases__: Tuple[Type[Any], ...] = (policy_cls,) + cls.__bases__[1:]

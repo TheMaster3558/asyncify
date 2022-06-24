@@ -20,6 +20,7 @@ if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
     from asyncio import run
 
 else:
+
     class Runner:
         def __init__(self, debug: bool = False):
             self.loop: asyncio.AbstractEventLoop = _MISSING
@@ -33,7 +34,7 @@ else:
             self,
             exc_type: Optional[Type[BaseException]],
             exc_value: Optional[BaseException],
-            traceback: Optional[TracebackType]
+            traceback: Optional[TracebackType],
         ) -> None:
             self.close()
 
