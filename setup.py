@@ -14,11 +14,18 @@ with open('README.rst', 'r') as rm:
     readme = rm.read()
 
 
-packages = ['asyncify']
+# fmt: off
+packages = [
+    'asyncify'
+    ]
 
 
-extras_require = {'docs': ['sphinx-press-theme']}
-
+extras_require = {
+    'docs': [
+        'sphinx-press-theme'
+        ]
+    }
+# fmt: on
 
 setup(
     name='asyncify-python',
