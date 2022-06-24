@@ -1,5 +1,5 @@
 import inspect
-from typing import TYPE_CHECKING, Any, Callable, Type, TypeVar
+from typing import TYPE_CHECKING, Type
 
 from .func import asyncify_func
 
