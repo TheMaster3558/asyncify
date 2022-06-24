@@ -19,7 +19,7 @@ else:
     P = TypeVar('P')
 
 
-_valid_names: Tuple[str, ...] = (
+_VALID_NAMES: Tuple[str, ...] = (
     'get_event_loop',
     'set_event_loop',
     'new_event_loop',
@@ -91,35 +91,19 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         if sys.platform == 'win32' and func.__name__ in ('get_child_watcher', 'set_child_watcher'):
             raise RuntimeError('{!r} is not supported on windows.'.format(func.__name__))
 
-        if func.__name__ not in _valid_names:
-            raise RuntimeError('{!r} is not a valid function name. {!r} are valid.'.format(func.__name__, _valid_names))
+        if func.__name__ not in _VALID_NAMES:
+            raise RuntimeError('{!r} is not a valid function name. {!r} are valid.'.format(func.__name__, _VALID_NAMES))
 
         old: Callable[..., Any] = getattr(super(), func.__name__)
 
-        # Explanation for two functions
-        # -----------------------------
-        # call_old
-        # If a user wants to call the function, they will get the return value the function passed in
-        # instead of the return value of the original functions
-        #
-        # retain_inner_return
-        # The event loop policy still needs to properly return the correct types
-        # so it returns the original functions return value
-
-        @functools.wraps(func)
-        def call_old(*args: "P.args", **kwargs: "P.kwargs") -> T:
-            ret = func(*args, **kwargs)
-            old(*args, **kwargs)
-            return ret
-
         @functools.wraps(old)
-        def retain_inner_return(*args: "P.args", **kwargs: "P.kwargs") -> Any:
+        def updated(*args: "P.args", **kwargs: "P.kwargs") -> Any:
             func(*args, **kwargs)
             return old(*args, **kwargs)
 
-        setattr(self, old.__name__, retain_inner_return)
+        setattr(self, old.__name__, updated)
 
-        return call_old
+        return func
 
     @classmethod
     def change_base_policy(cls, policy_cls: Type[asyncio.AbstractEventLoopPolicy]) -> None:
