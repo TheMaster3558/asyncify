@@ -5,12 +5,8 @@ from typing import TYPE_CHECKING, Any, Type, TypeVar, Optional
 from ._sentinel import RaisingSentinel
 
 if TYPE_CHECKING:
-    if sys.version_info >= (3, 7):
-        from typing_extensions import Self
-    else:
-        Self = Any
-
     from types import TracebackType
+    from typing_extensions import Self
     from ._types import Coro
 
 

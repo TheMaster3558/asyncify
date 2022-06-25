@@ -11,7 +11,7 @@ https://asyncify.readthedocs.io/en/latest/
 
 Installation
 --------------
-Python 3.5 or higher is required
+Python 3.7 or higher is required
 
 .. code:: sh
 
