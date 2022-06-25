@@ -28,7 +28,7 @@ else:
             self.loop: asyncio.AbstractEventLoop = _MISSING
             self.debug = debug
 
-        def __enter__(self) -> Self:
+        def __enter__(self) -> "Self":
             self.init(debug=self.debug)
             return self
 
@@ -108,7 +108,7 @@ else:
         """
         _check_loop()
 
-        with Runner(debug=debug) as runner:
+        with _Runner(debug=debug) as runner:
             return runner.run(main)
 
 
