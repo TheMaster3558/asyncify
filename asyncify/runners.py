@@ -2,7 +2,7 @@ import asyncio
 import sys
 from typing import TYPE_CHECKING, Any, Type, TypeVar, Optional
 
-from ._sentinel import _RaisingSentinel
+from ._sentinel import RaisingSentinel
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -16,7 +16,7 @@ __all__ = ('run', 'Runner')
 T = TypeVar('T')
 
 
-_MISSING: Any = _RaisingSentinel(getattr=(RuntimeError, 'Runner was not initialized properly.'))
+_MISSING: Any = RaisingSentinel(getattr=(RuntimeError, 'Runner was not initialized properly.'))
 
 
 if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
