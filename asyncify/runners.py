@@ -10,21 +10,20 @@ if TYPE_CHECKING:
     from ._types import Coro
 
 
-__all__ = ('run', 'Runner')
+__all__ = ('run',)
 
 
 T = TypeVar('T')
 
 
-_MISSING: Any = RaisingSentinel(getattr=(RuntimeError, 'Runner was not initialized properly.'))
+_MISSING: Any = RaisingSentinel(__getattribute__=(RuntimeError, 'Runner was not initialized properly.'))
 
 
 if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
     from asyncio import run
-
 else:
 
-    class Runner:
+    class _Runner:
         def __init__(self, debug: bool = False):
             self.loop: asyncio.AbstractEventLoop = _MISSING
             self.debug = debug
@@ -42,8 +41,6 @@ else:
             self.close()
 
         def run(self, main: "Coro[T]") -> T:
-            if self.loop is _MISSING:
-                raise RuntimeError('Runner incorrectly initialized.')
             return self.loop.run_until_complete(main)
 
         def close(self) -> None:
@@ -56,8 +53,6 @@ else:
                 asyncio.set_event_loop(self.loop)
 
         def init(self, debug: bool = False) -> None:
-            _check_loop()
-
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
 
@@ -111,6 +106,8 @@ else:
 
         .. versionadded:: 1.1
         """
+        _check_loop()
+
         with Runner(debug=debug) as runner:
             return runner.run(main)
 
