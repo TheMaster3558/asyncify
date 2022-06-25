@@ -102,7 +102,6 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
     -------
     TypeError
         The object passed was not a coroutine function.
-
     """
     if not inspect.isfunction(func):
         raise TypeError('Expected a callable function, not {!r}'.format(func))
