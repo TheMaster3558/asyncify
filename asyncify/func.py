@@ -5,7 +5,12 @@ import functools
 from typing import TYPE_CHECKING, Any, Callable, Coroutine, TypeVar
 
 if TYPE_CHECKING:
-    from typing_extensions import ParamSpec
+    import sys
+
+    if sys.version_info >= (3, 7):
+        from typing_extensions import ParamSpec
+    else:
+        ParamSpec = Any
 
 
 __all__ = ('asyncify_func', 'syncify_func')

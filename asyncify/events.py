@@ -4,7 +4,10 @@ import sys
 from typing import TYPE_CHECKING, Any, Callable, Tuple, Type, TypeVar
 
 if TYPE_CHECKING:
-    from typing_extensions import ParamSpec
+    if sys.version_info >= (3, 7):
+        from typing_extensions import ParamSpec
+    else:
+        ParamSpec = Any
 
 
 __all__ = ('EventsEventLoopPolicy',)

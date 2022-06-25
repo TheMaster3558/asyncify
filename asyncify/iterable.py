@@ -12,7 +12,13 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    import sys
+
+    if sys.version_info >= (3, 7):
+        from typing_extensions import Self
+    else:
+        Self = Any
+
     from ._types import NoArgAwaitable
 
 
