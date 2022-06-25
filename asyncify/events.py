@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     if sys.version_info >= (3, 7):
         from typing_extensions import ParamSpec
     else:
-        ParamSpec = Any
+        from ._types import ParamSpec
 
 
 __all__ = ('EventsEventLoopPolicy',)
