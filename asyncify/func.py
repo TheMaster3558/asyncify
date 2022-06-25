@@ -9,8 +9,6 @@ if TYPE_CHECKING:
 
     if sys.version_info >= (3, 7):
         from typing_extensions import ParamSpec
-    else:
-        ParamSpec = Any
 
 
 __all__ = ('asyncify_func', 'syncify_func')
