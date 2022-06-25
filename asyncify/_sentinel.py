@@ -1,5 +1,5 @@
 import functools
-from typing import Any,  NoReturn, Tuple, Type
+from typing import Any, NoReturn, Tuple, Type
 
 
 class RaisingSentinel:
