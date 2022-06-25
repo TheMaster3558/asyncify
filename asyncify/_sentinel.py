@@ -11,7 +11,7 @@ class RaisingSentinel:
                 raise exc_type(exc_msg)
 
             if old:
-                raiser = functools.wraps(old)
+                raiser = functools.wraps(old)  # type: ignore
             else:
                 raiser.__name__ = name
 
