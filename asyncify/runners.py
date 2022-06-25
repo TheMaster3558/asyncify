@@ -2,6 +2,8 @@ import asyncio
 import sys
 from typing import TYPE_CHECKING, Any, Type, TypeVar, Optional
 
+from ._sentinel import _RaisingSentinel
+
 if TYPE_CHECKING:
     from types import TracebackType
     from typing_extensions import Self
@@ -13,7 +15,8 @@ __all__ = ('run', 'Runner')
 
 T = TypeVar('T')
 
-_MISSING: Any = object()
+
+_MISSING: Any = _RaisingSentinel(getattr=(RuntimeError, 'Runner was not initialized properly.'))
 
 
 if sys.version_info >= (3, 7) and 'sphinx' not in sys.modules:
@@ -27,7 +30,7 @@ else:
             self.debug = debug
 
         def __enter__(self) -> Self:
-            self._init(debug=self.debug)
+            self.init(debug=self.debug)
             return self
 
         def __exit__(
@@ -39,7 +42,7 @@ else:
             self.close()
 
         def run(self, main: "Coro[T]") -> T:
-            if self.loop is None:
+            if self.loop is _MISSING:
                 raise RuntimeError('Runner incorrectly initialized.')
             return self.loop.run_until_complete(main)
 
@@ -52,7 +55,7 @@ else:
                 self.loop = _MISSING
                 asyncio.set_event_loop(self.loop)
 
-        def _init(self, debug: bool = False) -> None:
+        def init(self, debug: bool = False) -> None:
             _check_loop()
 
             self.loop = asyncio.new_event_loop()
