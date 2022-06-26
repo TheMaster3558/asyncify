@@ -53,7 +53,7 @@ class TaskLoop(Generic[P, T]):
         self.minutes = minutes
         self.seconds = seconds
 
-        self._task: asyncio.Task = MISSING
+        self._task: "asyncio.Task[None]" = MISSING
         self._iteration: int = 0
         self._last_iteration: Optional[datetime.datetime] = None
 
@@ -64,7 +64,7 @@ class TaskLoop(Generic[P, T]):
         return await self.callback(*args, **kwargs)
 
     @property
-    def task(self) -> asyncio.Task:
+    def task(self) -> "asyncio.Task[None]":
         """
         The :class:`asyncio.Task` the task is running in.
         """
@@ -129,7 +129,7 @@ class TaskLoop(Generic[P, T]):
             if self._after_loop:
                 await self._after_loop(*args, **kwargs)
 
-    def start(self, *args: "P.args", **kwargs: "P.args") -> None:
+    def start(self, *args: "P.args", **kwargs: "P.kwargs") -> None:  # fix later
         """
         Start the task. Arguments passed into this function will be passed into the callback.
 
@@ -138,7 +138,7 @@ class TaskLoop(Generic[P, T]):
         """
         self._iteration = 0
         loop = self.get_loop()
-        self._task = loop.create_task(self._start_task(*args, **kwargs), name=f'asyncify.loop {self.callback.__name__}')
+        self._task = loop.create_task(self._start_task(*args, **kwargs))
 
     def cancel(self) -> None:
         """
@@ -151,6 +151,8 @@ class TaskLoop(Generic[P, T]):
         """
         Wait until the next iteration finishes then cancel the task.
         """
+        assert self.next_iteration is not None
+
         next_iteration_seconds = (self.next_iteration - datetime.datetime.now()).total_seconds()
         await asyncio.sleep(next_iteration_seconds)
         self.cancel()
@@ -223,7 +225,7 @@ def task_loop(
              alarm.start()
              ...
     """
-    if not all(isinstance(item, int) for item in (hours, minutes, seconds)):
+    if not all(isinstance(item, int) for item in (hours, minutes, seconds)):  # type: ignore
         raise TypeError('You must provide an integer for all arguments.')
 
     def decorator(func: Callable[P, Coroutine[Any, Any, T]]) -> TaskLoop[P, T]:
