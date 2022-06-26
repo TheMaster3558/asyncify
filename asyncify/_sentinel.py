@@ -1,18 +1,15 @@
-import functools
-from typing import Any, NoReturn, Tuple, Type
+from typing import Any
 
 
-class RaisingSentinel:
-    def __init__(self, **error_on: Tuple[Type[Exception], str]):
-        for name, (exc_type, exc_msg) in error_on.items():
-            old = getattr(self, name, None)
+class MissingSentinel:
+    def __str__(self):
+        return '...'
 
-            def raiser(*args: Any, **kwargs: Any) -> NoReturn:
-                raise exc_type(exc_msg)
+    def __mul__(self, other):
+        return 0
 
-            if old:
-                raiser = functools.wraps(old)  # type: ignore
-            else:
-                raiser.__name__ = name
+    def __eq__(self, other):
+        return False
 
-            setattr(self, name, raiser)
+
+MISSING: Any = MissingSentinel()

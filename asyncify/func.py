@@ -54,7 +54,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
         The object passed in was not a function.
     """
     if not inspect.isfunction(func):
-        raise TypeError('Expected a callable function, not {!r}'.format(func))
+        raise TypeError(f'Expected a callable function, got {func.__class__.__name__!r}')
 
     @functools.wraps(func)
     async def async_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
@@ -104,7 +104,7 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
         The object passed was not a coroutine function.
     """
     if not inspect.isfunction(func):
-        raise TypeError('Expected a callable function, not {!r}'.format(func))
+        raise TypeError(f'Expected a callable function, got {func.__class__.__name__!r}')
 
     @functools.wraps(func)
     def sync_func(*args: "P.args", **kwargs: "P.kwargs") -> T:

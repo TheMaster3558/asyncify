@@ -83,17 +83,19 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
         Raises
         -------
+        TypeError
+            `func` is not a callable.
         RuntimeError
             The name either is invalid or is not supported on Windows.
         """
         if not isinstance(func, Callable):
-            raise TypeError('Expected a callable, not {!r}'.format(func))
+            raise TypeError(f'Expected a callable, got {func.__class__.__name__!r}')
 
         if sys.platform == 'win32' and func.__name__ in _UNIX_ONLY_NAMES:
-            raise RuntimeError('{!r} is not supported on windows.'.format(func.__name__))
+            raise RuntimeError(f'{func.__name__!r} is not supported on windows.')
 
         if func.__name__ not in _VALID_NAMES:
-            raise RuntimeError('{!r} is not a valid function name. {!r} are valid.'.format(func.__name__, _VALID_NAMES))
+            raise RuntimeError(f'{func.__name__!r} is not a valid function name. {_VALID_NAMES} are valid.')
 
         old: Callable[..., Any] = getattr(super(), func.__name__)
 
@@ -148,6 +150,6 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             `policy_cls` does not inherit from `asyncio.AbstractEventLoopPolicy`.
         """
         if asyncio.AbstractEventLoop not in policy_cls.__bases__:
-            raise TypeError('policy_cls must inherited from asyncio.AbstractEventLoopPolicy')
+            raise TypeError('policy_cls must inherited from asyncio.AbstractEventLoopPolicy.')
 
         cls.__bases__: Tuple[Type[Any], ...] = (policy_cls,) + cls.__bases__[1:]

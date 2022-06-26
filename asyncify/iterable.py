@@ -108,6 +108,6 @@ def async_iter(
         The object passed was not an iterable.
     """
     if not hasattr(iterable, '__iter__'):
-        raise TypeError('Expected iterable object, not {!r}'.format(iterable))
+        raise TypeError(f'Expected iterable object, got {iterable.__class__.__name__!r}')
 
     return AsyncIterable(iterable, before=before, after=after)
