@@ -29,12 +29,6 @@ Iterables
 
 |
 
-Runners
---------
-.. autofunction:: run
-
-|
-
 Events
 --------
 .. autoclass:: EventsEventLoopPolicy
