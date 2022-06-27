@@ -62,9 +62,7 @@ class TaskLoop(Generic[P, T]):
         self.seconds = kwargs.get('seconds', 0)
         return self
 
-    def __init__(
-        self, callback: Callable[P, Coro[T]], *, hours: int = 0, minutes: int = 0, seconds: int = 0
-    ):
+    def __init__(self, callback: Callable[P, Coro[T]], *, hours: int = 0, minutes: int = 0, seconds: int = 0):
         self.callback = callback
         self._coro_task: asyncio.Task[T] = MISSING
 
