@@ -28,6 +28,8 @@ class TaskLoop(Generic[P, T]):
     """
     Run a task multiple times automatically waiting in between each run.
 
+    .. versionadded:: 1.3
+
     Parameters
     -----------
     callback: Callable[``...``, ``Coroutine``]
@@ -45,6 +47,10 @@ class TaskLoop(Generic[P, T]):
     TypeError
         `callback` is not callable or `hours`, `minutes`, or `seconds` are not all :class:`int`.
     """
+
+    _hours: int
+    _minutes: int
+    _seconds: int
 
     def __new__(cls, *args: Any, **kwargs: Any):
         self = super().__new__(cls)
@@ -163,7 +169,8 @@ class TaskLoop(Generic[P, T]):
 
     def get_loop(self) -> asyncio.AbstractEventLoop:
         """
-        The method used to get the event loop.
+        The method used to get the event loop. It can be overridden to change how to get the loop.
+        By default it uses :func:`asyncio.get_running_loop`.
         """
         return asyncio.get_running_loop()
 
@@ -187,8 +194,14 @@ class TaskLoop(Generic[P, T]):
 
         .. note::
             This must be called in async context.
+
+        Raises
+        -------
+        RuntimeError
+            The TaskLoop has already been started.
+
         """
-        if self.task is MISSING:
+        if self.task is not MISSING:
             raise RuntimeError('TaskLoop is already started.')
 
         self._iteration = 0

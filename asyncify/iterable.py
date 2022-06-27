@@ -80,9 +80,9 @@ def async_iter(
     iterable: :class:`Iterable`
         The iterable to iterator over.
     before: Optional[``Callable[<no_parameters>, Awaitable[Any]]``]
-        The optional asynchronous callable for before the iteration.
+        An optional asynchronous callable for before the iteration.
     after: Optional[``Callable[<no_parameters>, Awaitable[Any]]``]
-        The optional asynchronous callable for after the iteration.
+        An optional asynchronous callable for after the iteration.
 
 
     .. note::

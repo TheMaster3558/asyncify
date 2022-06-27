@@ -67,7 +67,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
         Register a function to be called when an event loop policy method is called.
         The name of the functions should match the event loop policy method.
-        the valid names are ``get_event_loop``, ``set_event_loop``, ``new_event_loop``,
+        The valid names are ``get_event_loop``, ``set_event_loop``, ``new_event_loop``,
         ``get_child_watcher``, ``set_child_watcher``
 
         Example
