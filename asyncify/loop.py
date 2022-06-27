@@ -44,27 +44,47 @@ class TaskLoop(Generic[P, T]):
         `callback` is not callable or `hours`, `minutes`, or `seconds` are not all :class:`int`.
     """
 
+    def __new__(cls, *args: Any, **kwargs: Any):
+        self = super().__new__(cls)
+        self.hours = kwargs.get('hours', 0)
+        self.minutes = kwargs.get('minutes', 0)
+        self.seconds = kwargs.get('seconds', 0)
+        return self
+
     def __init__(
         self, callback: "Callable[P, Coroutine[Any, Any, T]]", *, hours: int = 0, minutes: int = 0, seconds: int = 0
     ):
         self.callback = callback
+        self._coro_task: "asyncio.Task[T]" = MISSING
 
-        self.hours = hours
-        self.minutes = minutes
-        self.seconds = seconds
-
-        if self.total_seconds <= 0:
-            raise ValueError('The total interval must be greater than 0.')
+        self.change_interval(hours=hours, minutes=minutes, seconds=seconds)
 
         self._task: "asyncio.Task[None]" = MISSING
         self._iteration: int = 0
         self._last_iteration: Optional[datetime.datetime] = None
 
-        self._before_loop: Optional[Callable[P, Any]] = None
-        self._after_loop: Optional[Callable[P, Any]] = None
+        self._before_loop: "Optional[Callable[P, Any]]" = None
+        self._after_loop: "Optional[Callable[P, Any]]" = None
 
     async def __call__(self, *args: "P.args", **kwargs: "P.kwargs") -> T:
         return await self.callback(*args, **kwargs)
+
+    def _assert_time(self, old: int, name: str) -> None:
+        if self.total_seconds <= 0:
+            setattr(self, name, old)
+            raise ValueError('The total interval must be greater than 0.')
+
+    def change_interval(self, hours: int = 0, minutes: int = 0, seconds: int = 0):
+        old_hours, old_minutes, old_seconds = self.hours, self.minutes, self.seconds
+
+        self._hours = hours
+        self._minutes = minutes
+        self._seconds = seconds
+
+        if self.total_seconds <= 0:
+            if old_hours + old_minutes + old_seconds > 0:
+                self.change_interval(hours=old_hours, minutes=old_minutes, seconds=old_seconds)
+            raise ValueError('The total seconds need to be greater than 0.')
 
     @property
     def task(self) -> "asyncio.Task[None]":
@@ -74,26 +94,52 @@ class TaskLoop(Generic[P, T]):
         return self._task
 
     @property
+    def hours(self) -> int:
+        """
+        :class:`int` The hours to wait in between each loop.
+        """
+        return self._hours
+
+    @hours.setter
+    def hours(self, new: int):
+        self._assert_time(self._hours, '_hours')
+        self._hours = new
+
+    @property
+    def minutes(self) -> int:
+        """
+        :class:`int` The minutes to wait in between each loop.
+        """
+        return self._minutes
+
+    @minutes.setter
+    def minutes(self, new: int):
+        self._assert_time(self._hours, '_minutes')
+        self._minutes = new
+
+    @property
+    def seconds(self) -> int:
+        """
+        :class:`int` The seconds to wait in between each loop.
+        """
+        return self._seconds
+
+    @seconds.setter
+    def seconds(self, new: int):
+        self._assert_time(self._hours, '_seconds')
+        self._seconds = new
+
+    @property
     def total_seconds(self) -> int:
         """
-        The total seconds between each loop.
+        :class:`int` The total seconds between each loop.
         """
         return (self.hours * 3600) + (self.minutes * 60) + (self.seconds * 1)
-
-    @total_seconds.setter
-    def total_seconds(self, seconds: int):
-        self.hours = seconds // 3600
-        seconds -= self.hours * 3600
-
-        self.minutes = seconds // 60
-        seconds -= self.minutes * 60
-
-        self.seconds = seconds
 
     @property
     def iteration(self) -> int:
         """
-        The current iteration of the loop.
+        :class:`int` The current iteration of the loop.
         """
         return self._iteration
 
@@ -124,7 +170,8 @@ class TaskLoop(Generic[P, T]):
             await self._before_loop(*args, **kwargs)
         try:
             while True:
-                await self.callback(*args, **kwargs)
+                loop = self.get_loop()
+                self._coro_task = loop.create_task(self.callback(*args, **kwargs))
                 self._iteration += 1
                 self._last_iteration = datetime.datetime.now()
                 await asyncio.sleep(self.total_seconds)
@@ -132,13 +179,16 @@ class TaskLoop(Generic[P, T]):
             if self._after_loop:
                 await self._after_loop(*args, **kwargs)
 
-    def start(self, *args: "P.args", **kwargs: "P.kwargs") -> None:  # fix later
+    def start(self, *args: "P.args", **kwargs: "P.kwargs") -> None:
         """
         Start the task. Arguments passed into this function will be passed into the callback.
 
         .. note::
             This must be called in async context.
         """
+        if self.task is MISSING:
+            raise RuntimeError('TaskLoop is already started.')
+
         self._iteration = 0
         loop = self.get_loop()
         self._task = loop.create_task(self._start_task(*args, **kwargs))
@@ -149,6 +199,7 @@ class TaskLoop(Generic[P, T]):
         """
         self._task.cancel()
         self._task = MISSING
+        self._coro_task = MISSING
 
     async def stop(self) -> None:
         """
@@ -158,6 +209,7 @@ class TaskLoop(Generic[P, T]):
 
         next_iteration_seconds = (self.next_iteration - datetime.datetime.now()).total_seconds()
         await asyncio.sleep(next_iteration_seconds)
+        await self._coro_task
         self.cancel()
 
     def before_loop(self, func: "Callable[P, Any]") -> "Callable[P, Any]":

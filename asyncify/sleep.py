@@ -43,6 +43,16 @@ async def today_sleep_until(hours: int = MISSING, minutes: int = MISSING, second
     -------
     TypeError
         No arguments were provided.
+
+
+    Example
+    ---------
+    .. code:: py
+
+        import asyncify
+
+        async def main():
+            await asyncify.today_sleep_until(hours=9, minutes=30)  # sleeps until 9:30 AM
     """
     if not hours or not minutes or not seconds:
         raise TypeError('You must provide hours, minutes, or seconds.')
