@@ -9,12 +9,14 @@ from ._sentinel import MISSING
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec
+    from ._types import Coro
 
 
 __all__ = ('TaskLoop', 'task_loop')
 
 
 T = TypeVar('T')
+T_return = TypeVar('T_return')
 
 if TYPE_CHECKING:
     P = ParamSpec('P')
@@ -52,7 +54,7 @@ class TaskLoop(Generic[P, T]):
         return self
 
     def __init__(
-        self, callback: "Callable[P, Coroutine[Any, Any, T]]", *, hours: int = 0, minutes: int = 0, seconds: int = 0
+        self, callback: "Callable[P, Coro[T]]", *, hours: int = 0, minutes: int = 0, seconds: int = 0
     ):
         self.callback = callback
         self._coro_task: "asyncio.Task[T]" = MISSING
@@ -212,7 +214,7 @@ class TaskLoop(Generic[P, T]):
         await self._coro_task
         self.cancel()
 
-    def before_loop(self, func: "Callable[P, Any]") -> "Callable[P, Any]":
+    def before_loop(self, func: "Callable[P, Coro[T_return]]") -> "Callable[P, Coro[T_return]]":
         """|deco|
 
         A callable to call before the loop starts. The arguments must match the original callback.
@@ -223,7 +225,7 @@ class TaskLoop(Generic[P, T]):
         self._before_loop = func
         return func
 
-    def after_loop(self, func: "Callable[P, Any]") -> "Callable[P, Any]":
+    def after_loop(self, func: "Callable[P, Coro[T_return]]") -> "Callable[P, Coro[T_return]]":
         """|deco|
 
         A callable to call when the loop ends. The arguments must match the original callback.
