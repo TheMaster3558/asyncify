@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import functools
 import sys
@@ -62,7 +64,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
     .. versionadded:: 1.1
     """
 
-    def event(self, func: "Callable[P, T]") -> "Callable[P, T]":
+    def event(self, func: Callable[P, T]) -> Callable[P, T]:
         """|deco|
 
         Register a function to be called when an event loop policy method is called.
@@ -100,7 +102,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         old: Callable[..., Any] = getattr(super(), func.__name__)
 
         @functools.wraps(old)
-        def updated(*args: "P.args", **kwargs: "P.kwargs") -> Any:
+        def updated(*args: P.args, **kwargs: P.kwargs) -> Any:
             func(*args, **kwargs)
             return old(*args, **kwargs)
 

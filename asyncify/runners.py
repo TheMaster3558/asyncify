@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 from typing import TYPE_CHECKING, TypeVar
 
@@ -12,7 +14,7 @@ T = TypeVar('T')
 
 
 # remove in v2
-def run(main: "Coro[T]", *, debug: bool = False) -> T:
+def run(main: Coro[T], *, debug: bool = False) -> T:
     import warnings
 
     warnings.warn('asyncify.run has been deprecated since 1.3. Use asyncio.run instead.', category=DeprecationWarning)

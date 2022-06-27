@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import inspect
 from typing import TYPE_CHECKING, Type
 
@@ -10,7 +12,7 @@ if TYPE_CHECKING:
 __all__ = ('asyncify_class', 'ignore')
 
 
-def ignore(func: "CallableT") -> "CallableT":
+def ignore(func: CallableT) -> CallableT:
     """|deco|
 
     Ignore a function in a class when using :func:`asyncify.asyncify_class`.
@@ -19,7 +21,7 @@ def ignore(func: "CallableT") -> "CallableT":
     return func
 
 
-def asyncify_class(cls: "TypeT") -> "TypeT":
+def asyncify_class(cls: TypeT) -> TypeT:
     """|deco|
 
     Turn a classes methods into async functions.

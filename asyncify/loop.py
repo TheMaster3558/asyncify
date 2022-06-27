@@ -1,4 +1,6 @@
-# inspired by discord.py's tasks extension
+from __future__ import annotations
+
+# inspired by discord.py's tasks extension (discord.ext.tasks)
 
 import asyncio
 import datetime
@@ -27,6 +29,7 @@ else:
 class TaskLoop(Generic[P, T]):
     """
     Run a task multiple times automatically waiting in between each run.
+    **Inspired by discord.py's tasks extension (discord.ext.tasks).**
 
     .. versionadded:: 1.3
 
@@ -60,21 +63,21 @@ class TaskLoop(Generic[P, T]):
         return self
 
     def __init__(
-        self, callback: "Callable[P, Coro[T]]", *, hours: int = 0, minutes: int = 0, seconds: int = 0
+        self, callback: Callable[P, Coro[T]], *, hours: int = 0, minutes: int = 0, seconds: int = 0
     ):
         self.callback = callback
-        self._coro_task: "asyncio.Task[T]" = MISSING
+        self._coro_task: asyncio.Task[T] = MISSING
 
         self.change_interval(hours=hours, minutes=minutes, seconds=seconds)
 
-        self._task: "asyncio.Task[None]" = MISSING
+        self._task: asyncio.Task[None] = MISSING
         self._iteration: int = 0
         self._last_iteration: Optional[datetime.datetime] = None
 
-        self._before_loop: "Optional[Callable[P, Any]]" = None
-        self._after_loop: "Optional[Callable[P, Any]]" = None
+        self._before_loop: Optional[Callable[P, Any]] = None
+        self._after_loop: Optional[Callable[P, Any]] = None
 
-    async def __call__(self, *args: "P.args", **kwargs: "P.kwargs") -> T:
+    async def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T:
         return await self.callback(*args, **kwargs)
 
     def _assert_time(self, old: int, name: str) -> None:
@@ -95,7 +98,7 @@ class TaskLoop(Generic[P, T]):
             raise ValueError('The total seconds need to be greater than 0.')
 
     @property
-    def task(self) -> "asyncio.Task[None]":
+    def task(self) -> asyncio.Task[None]:
         """
         The :class:`asyncio.Task` the task is running in.
         """
@@ -174,7 +177,7 @@ class TaskLoop(Generic[P, T]):
         """
         return asyncio.get_running_loop()
 
-    async def _start_task(self, *args: "P.args", **kwargs: "P.kwargs") -> None:
+    async def _start_task(self, *args: P.args, **kwargs: P.kwargs) -> None:
         if self._before_loop:
             await self._before_loop(*args, **kwargs)
         try:
@@ -188,7 +191,7 @@ class TaskLoop(Generic[P, T]):
             if self._after_loop:
                 await self._after_loop(*args, **kwargs)
 
-    def start(self, *args: "P.args", **kwargs: "P.kwargs") -> None:
+    def start(self, *args: P.args, **kwargs: P.kwargs) -> None:
         """
         Start the task. Arguments passed into this function will be passed into the callback.
 
@@ -227,7 +230,7 @@ class TaskLoop(Generic[P, T]):
         await self._coro_task
         self.cancel()
 
-    def before_loop(self, func: "Callable[P, Coro[T_return]]") -> "Callable[P, Coro[T_return]]":
+    def before_loop(self, func: Callable[P, Coro[T_return]]) -> Callable[P, Coro[T_return]]:
         """|deco|
 
         A callable to call before the loop starts. The arguments must match the original callback.
@@ -238,7 +241,7 @@ class TaskLoop(Generic[P, T]):
         self._before_loop = func
         return func
 
-    def after_loop(self, func: "Callable[P, Coro[T_return]]") -> "Callable[P, Coro[T_return]]":
+    def after_loop(self, func: Callable[P, Coro[T_return]]) -> Callable[P, Coro[T_return]]:
         """|deco|
 
         A callable to call when the loop ends. The arguments must match the original callback.
@@ -252,7 +255,7 @@ class TaskLoop(Generic[P, T]):
 
 def task_loop(
     *, hours: int = 0, minutes: int = 0, seconds: int = 0
-) -> "Callable[[Callable[P, Coroutine[Any, Any, T]]], TaskLoop[P, T]]":
+) -> Callable[[Callable[P, Coroutine[Any, Any, T]]], TaskLoop[P, T]]:
     """|deco|
 
     Run a task multiple times automatically waiting in between each run.

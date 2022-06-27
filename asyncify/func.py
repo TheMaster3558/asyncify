@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import inspect
 import functools
@@ -19,7 +21,7 @@ else:
     P = TypeVar('P')
 
 
-def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]]":
+def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
     """|deco|
 
     Make a synchronous function into an asynchronous function by running it in a separate thread.
@@ -57,7 +59,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
         raise TypeError(f'Expected a callable function, got {func.__class__.__name__!r}')
 
     @functools.wraps(func)
-    async def async_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
+    async def async_func(*args: P.args, **kwargs: P.kwargs) -> T:
         new_func = functools.partial(func, *args, **kwargs)
 
         loop = asyncio.get_running_loop()
@@ -66,7 +68,7 @@ def asyncify_func(func: "Callable[P, T]") -> "Callable[P, Coroutine[Any, Any, T]
     return async_func
 
 
-def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]":
+def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
     """|deco|
 
     Make an asynchronous function a synchronous function.
@@ -107,7 +109,7 @@ def syncify_func(func: "Callable[P, Coroutine[Any, Any, T]]") -> "Callable[P, T]
         raise TypeError(f'Expected a callable function, got {func.__class__.__name__!r}')
 
     @functools.wraps(func)
-    def sync_func(*args: "P.args", **kwargs: "P.kwargs") -> T:
+    def sync_func(*args: P.args, **kwargs: P.kwargs) -> T:
         loop = asyncio.get_running_loop()
         return loop.run_until_complete(func(*args, **kwargs))
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -27,8 +29,8 @@ class AsyncIterable(Generic[T]):
         self,
         iterable: Iterable[T],
         *,
-        before: Optional["NoArgAwaitable[Any]"] = None,
-        after: Optional["NoArgAwaitable[Any]"] = None,
+        before: Optional[NoArgAwaitable[Any]] = None,
+        after: Optional[NoArgAwaitable[Any]] = None,
     ):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
@@ -69,8 +71,8 @@ class AsyncIterable(Generic[T]):
 
 def async_iter(
     iterable: Iterable[T],
-    before: Optional["NoArgAwaitable[Any]"] = None,
-    after: Optional["NoArgAwaitable[Any]"] = None,
+    before: Optional[NoArgAwaitable[Any]] = None,
+    after: Optional[NoArgAwaitable[Any]] = None,
 ) -> AsyncIterable[T]:
     """
     Asynchronously iterate through an iterable while calling an async callback before and/or after each iteration.
@@ -110,4 +112,4 @@ def async_iter(
     if not hasattr(iterable, '__iter__'):
         raise TypeError(f'Expected iterable object, got {iterable.__class__.__name__!r}')
 
-    return AsyncIterable(iterable, before=before, after=after)
+    return AsyncIterable[T](iterable, before=before, after=after)
