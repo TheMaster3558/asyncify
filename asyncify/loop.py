@@ -45,13 +45,16 @@ class TaskLoop(Generic[P, T]):
     """
 
     def __init__(
-        self, callback: Callable[P, Coroutine[Any, Any, T]], *, hours: int = 0, minutes: int = 0, seconds: int = 0
+        self, callback: "Callable[P, Coroutine[Any, Any, T]]", *, hours: int = 0, minutes: int = 0, seconds: int = 0
     ):
         self.callback = callback
 
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds
+
+        if self.total_seconds <= 0:
+            raise ValueError('The total interval must be greater than 0.')
 
         self._task: "asyncio.Task[None]" = MISSING
         self._iteration: int = 0
@@ -157,7 +160,7 @@ class TaskLoop(Generic[P, T]):
         await asyncio.sleep(next_iteration_seconds)
         self.cancel()
 
-    def before_loop(self, func: Callable[P, Any]) -> Callable[P, Any]:
+    def before_loop(self, func: "Callable[P, Any]") -> "Callable[P, Any]":
         """|deco|
 
         A callable to call before the loop starts. The arguments must match the original callback.
@@ -168,7 +171,7 @@ class TaskLoop(Generic[P, T]):
         self._before_loop = func
         return func
 
-    def after_loop(self, func: Callable[P, Any]) -> Callable[P, Any]:
+    def after_loop(self, func: "Callable[P, Any]") -> "Callable[P, Any]":
         """|deco|
 
         A callable to call when the loop ends. The arguments must match the original callback.
@@ -182,7 +185,7 @@ class TaskLoop(Generic[P, T]):
 
 def task_loop(
     *, hours: int = 0, minutes: int = 0, seconds: int = 0
-) -> Callable[[Callable[P, Coroutine[Any, Any, T]]], TaskLoop[P, T]]:
+) -> "Callable[[Callable[P, Coroutine[Any, Any, T]]], TaskLoop[P, T]]":
     """|deco|
 
     Run a task multiple times automatically waiting in between each run.
@@ -232,6 +235,6 @@ def task_loop(
         if not inspect.iscoroutinefunction(func):
             raise TypeError(f'Expected a coroutine function, got {func.__class__.__name__!r}')
 
-        return TaskLoop(func, hours=hours, minutes=minutes, seconds=seconds)
+        return TaskLoop[P, T](func, hours=hours, minutes=minutes, seconds=seconds)
 
     return decorator
