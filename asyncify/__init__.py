@@ -4,12 +4,11 @@ from .cls import *
 from .func import *
 from .events import *
 from .iterable import *
-from .loop import *
 from .runners import *
 from .sleep import *
 
 
-__all__ = cls.__all__ + func.__all__ + events.__all__ + iterable.__all__ + loop.__all__ + runners.__all__
+__all__ = cls.__all__ + func.__all__ + events.__all__ + iterable.__all__ + runners.__all__
 
 
 __title__ = 'asyncify'
