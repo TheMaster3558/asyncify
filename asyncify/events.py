@@ -26,8 +26,7 @@ _VALID_NAMES: Tuple[str, ...] = (
     'get_event_loop',
     'set_event_loop',
     'new_event_loop',
-    'get_child_watcher',
-    'set_child_watcher',
+    *_UNIX_ONLY_NAMES
 )
 
 
