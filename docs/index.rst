@@ -1,7 +1,7 @@
 Welcome to asyncify's documentation!
 ====================================
 
-This python library to make things made for and with `asyncio`.
+A python library with help things to be used with asyncio!
 
 
 Table of Contents
