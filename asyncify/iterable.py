@@ -25,6 +25,8 @@ T = TypeVar('T')
 
 
 class AsyncIterable(Generic[T]):
+    __slots__ = ('iterable', 'iterator', 'before', 'after')
+
     def __init__(
         self,
         iterable: Iterable[T],
@@ -89,6 +91,9 @@ def async_iter(
 
     .. note::
         `before` and `after` must not take any parameters.
+
+    .. warning:: `before` will be called once more than `after` due to not knowing when to stop iterating until after
+    `before` is called.
 
     Example
     ---------

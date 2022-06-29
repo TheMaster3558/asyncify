@@ -22,12 +22,7 @@ else:
 
 _UNIX_ONLY_NAMES: Tuple[str, ...] = ('get_child_watcher', 'set_child_watcher')
 
-_VALID_NAMES: Tuple[str, ...] = (
-    'get_event_loop',
-    'set_event_loop',
-    'new_event_loop',
-    *_UNIX_ONLY_NAMES
-)
+_VALID_NAMES: Tuple[str, ...] = ('get_event_loop', 'set_event_loop', 'new_event_loop', *_UNIX_ONLY_NAMES)
 
 
 class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
