@@ -46,3 +46,9 @@ Sleep
 |
 
 .. autofunction:: today_sleep_until
+
+|
+
+Hybrid
+-------
+.. autofunction:: hybrid_function
