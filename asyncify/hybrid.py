@@ -18,10 +18,13 @@ T_async = TypeVar('T_async')
 
 
 class HybridFunction(Generic[T_sync, T_async]):
-    regex = re.compile(r'await\s+(\w|\.)*\(.*\)')
+    regex = re.compile(r'await\s+(\w|\.)*\s*\(.*\)')
 
     def __init__(
-        self, name: str, sync_callback: Callable[..., T_sync], async_callback: Callable[..., Coroutine[Any, Any, T_async]]
+        self,
+        name: str,
+        sync_callback: Callable[..., T_sync],
+        async_callback: Callable[..., Coroutine[Any, Any, T_async]],
     ):
         self._name = name
         if len(inspect.signature(sync_callback).parameters) != len(inspect.signature(async_callback).parameters):
@@ -33,7 +36,12 @@ class HybridFunction(Generic[T_sync, T_async]):
         self._instance: Optional[object] = None
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, self.__class__) and other._name == self._name
+        return (
+            isinstance(other, self.__class__)
+            and other._name == self._name
+            and other.sync_callback is self.sync_callback
+            and other.async_callback is self.async_callback
+        )
 
     def __get__(self, instance: object, owner: type) -> Self:
         new_self = self.__class__(self._name, self.sync_callback, self.async_callback)
@@ -44,11 +52,8 @@ class HybridFunction(Generic[T_sync, T_async]):
         search = self.regex.search(code_context)
         if not search:
             return False
-
-        span = search.span()
-        if self._name not in code_context[span[0]:span[1]]:
+        if not re.search(rf'\(*{self._name}\)\s*', code_context):
             return False
-
         return True
 
     def _get_frame(self, current_frame: FrameType) -> str:
