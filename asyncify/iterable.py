@@ -92,8 +92,9 @@ def async_iter(
     .. note::
         `before` and `after` must not take any parameters.
 
-    .. warning:: `before` will be called once more than `after` due to not knowing when to stop iterating until after
-    `before` is called.
+    .. warning::
+        `before` will be called once more than `after` due to not knowing when to stop iterating until after
+        `before` is called.
 
     Example
     ---------
@@ -107,7 +108,7 @@ def async_iter(
             sleep = functools.partial(asyncio.sleep, 1)
 
             async for number in async_iter([1, 2, 3], sleep, before=True):
-                print('%d seconds have passed.' % number)
+                print(f'{number} seconds have passed.')
 
     Raises
     -------
