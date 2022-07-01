@@ -32,7 +32,7 @@ class HybridFunction(Generic[T_sync, T_async]):
         functools.update_wrapper(self, self.sync_callback)
         self._instance: Optional[object] = None
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, self.__class__) and other._name == self._name
 
     def __get__(self, instance: object, owner: type) -> Self:
