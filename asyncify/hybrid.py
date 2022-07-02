@@ -19,6 +19,7 @@ T_async = TypeVar('T_async')
 
 class HybridFunction(Generic[T_sync, T_async]):
     regex = re.compile(r'await\s+(\w|\.)*\s*\(.*\)')
+    name_regex: re.Pattern
 
     def __init__(
         self,
@@ -33,7 +34,10 @@ class HybridFunction(Generic[T_sync, T_async]):
         self.sync_callback = sync_callback
         self.async_callback = async_callback
         functools.update_wrapper(self, self.sync_callback)
+
         self._instance: Optional[object] = None
+
+        self.name_regex = re.compile(rf'\(*{self._name}\)*\s*')
 
     def __eq__(self, other: object) -> bool:
         return (
@@ -52,16 +56,14 @@ class HybridFunction(Generic[T_sync, T_async]):
         search = self.regex.search(code_context)
         if not search:
             return False
-        if not re.search(rf'\(*{self._name}\)\s*', code_context):
-            return False
         return True
 
     def _get_frame(self, current_frame: FrameType) -> str:
         for frame in inspect.getouterframes(current_frame):
             if not frame.code_context:
                 continue
-
-            if self._name in frame.code_context[0]:
+            print(frame.code_context)
+            if self.name_regex.search(frame.code_context[0]):
                 return frame.code_context[0]
         raise RuntimeError('Could not tell if it should call sync or async.')
 
