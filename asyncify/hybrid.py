@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Callable, Coroutine, Generic, Optional, T
 if TYPE_CHECKING:
     from types import FrameType
     from typing_extensions import Self
+    from ._types import Coro
 
 
 __all__ = ('HybridFunction', 'hybrid_function')
@@ -25,7 +26,7 @@ class HybridFunction(Generic[T_sync, T_async]):
         self,
         name: str,
         sync_callback: Callable[..., T_sync],
-        async_callback: Callable[..., Coroutine[Any, Any, T_async]],
+        async_callback: Callable[..., Coro[T_async]],
     ):
         self._name = name
         if len(inspect.signature(sync_callback).parameters) != len(inspect.signature(async_callback).parameters):
@@ -33,11 +34,14 @@ class HybridFunction(Generic[T_sync, T_async]):
 
         self.sync_callback = sync_callback
         self.async_callback = async_callback
-        functools.update_wrapper(self, self.sync_callback)
 
         self._instance: Optional[object] = None
 
         self.name_regex = re.compile(rf'\(*{self._name}\)*\s*')
+
+    @property
+    def __name__(self) -> str:
+        return self._name
 
     def __eq__(self, other: object) -> bool:
         return (
@@ -67,7 +71,7 @@ class HybridFunction(Generic[T_sync, T_async]):
                 return frame.code_context[0]
         raise RuntimeError('Could not tell if it should call sync or async.')
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Union[T_sync, Coroutine[Any, Any, T_async]]:
+    def __call__(self, *args: Any, **kwargs: Any) -> Union[T_sync, Coro[T_async]]:
         if self._instance:
             args = (self._instance, *args)
 
@@ -81,7 +85,7 @@ class HybridFunction(Generic[T_sync, T_async]):
 
 
 def hybrid_function(
-    name: str, sync_callback: Callable[..., T_sync], async_callback: Callable[..., Coroutine[Any, Any, T_async]]
+    name: str, sync_callback: Callable[..., T_sync], async_callback: Callable[..., Coro[T_async]]
 ) -> HybridFunction[T_sync, T_async]:
     """
     Do multiple things depending on whether it was awaited or not!
