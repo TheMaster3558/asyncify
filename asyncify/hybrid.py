@@ -29,9 +29,6 @@ class HybridFunction(Generic[T_sync, T_async]):
         async_callback: Callable[..., Coro[T_async]],
     ):
         self._name = name
-        if len(inspect.signature(sync_callback).parameters) != len(inspect.signature(async_callback).parameters):
-            raise TypeError('Both function signatures must be the same.')
-
         self.sync_callback = sync_callback
         self.async_callback = async_callback
 
