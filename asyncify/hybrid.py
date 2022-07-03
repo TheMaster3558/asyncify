@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import functools
 import inspect
 import re
-from typing import TYPE_CHECKING, Any, Callable, Coroutine, Generic, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Generic, Optional, TypeVar, Union
 
 if TYPE_CHECKING:
     from types import FrameType
@@ -20,7 +19,7 @@ T_async = TypeVar('T_async')
 
 class HybridFunction(Generic[T_sync, T_async]):
     regex = re.compile(r'await\s+(\w|\.)*\s*\(.*\)')
-    name_regex: re.Pattern
+    name_regex: re.Pattern[str]
 
     def __init__(
         self,
