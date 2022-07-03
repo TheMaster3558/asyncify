@@ -66,7 +66,6 @@ class HybridFunction(Generic[T_sync, T_async]):
         for frame in inspect.getouterframes(current_frame):
             if not frame.code_context:
                 continue
-            print(frame.code_context)
             if self.name_regex.search(frame.code_context[0]):
                 return frame.code_context[0]
         raise RuntimeError('Could not tell if it should call sync or async.')
