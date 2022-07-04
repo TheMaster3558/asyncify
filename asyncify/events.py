@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import functools
 import sys
-from typing import TYPE_CHECKING, Any, Callable, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, Set, Tuple, Type, TypeVar
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec
@@ -57,6 +57,26 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
     .. versionadded:: 1.1
     """
+    _OLDS: Dict[str, Callable[..., Any]] = {}
+
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self._set_olds()
+        self._registered_events: Set[str] = set()
+
+    @classmethod
+    def _set_olds(cls) -> None:
+        cls._OLDS['get_event_loop'] = cls.get_event_loop
+        cls._OLDS['set_event_loop'] = cls.set_event_loop
+        cls._OLDS['new_event_loop'] = cls.new_event_loop
+
+        if sys.platform != 'win32':
+            cls._OLDS['get_child_watcher'] = cls.get_child_watcher
+            cls._OLDS['set_child_watcher'] = cls.set_child_watcher
+
+    def __repr__(self) -> str:
+        return f'<EventsEventLoopPolicy base={self.__class__.__bases__[0]!r},' \
+               f' registered_events={self._registered_events!r}>'
 
     def event(self, func: Callable[P, T]) -> Callable[P, T]:
         """|deco|
@@ -101,8 +121,29 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             return old(*args, **kwargs)
 
         setattr(self, old.__name__, updated)
+        self._registered_events.add(old.__name__)
 
         return func
+
+    def remove_event(self, name: str) -> None:
+        """
+        Remove an event from the callbacks that would be called.
+
+        Parameters
+        ----------
+        name: class:`str`
+            The name of the event.
+
+        Raises
+        -------
+        RuntimeError
+            `name` is not a registered event.
+        """
+        if name not in self._registered_events:
+            raise RuntimeError(f'{name!r} is not a registered event.')
+
+        setattr(self, name, self._OLDS[name])
+        self._registered_events.remove(name)
 
     @classmethod
     def change_base_policy(cls, policy_cls: Type[asyncio.AbstractEventLoopPolicy]) -> None:
@@ -148,4 +189,5 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         if asyncio.AbstractEventLoop not in policy_cls.__bases__:
             raise TypeError('policy_cls must inherited from asyncio.AbstractEventLoopPolicy.')
 
-        cls.__bases__: Tuple[Type[Any], ...] = (policy_cls,) + cls.__bases__[1:]
+        cls.__bases__: Tuple[Type[Any], ...] = (policy_cls, *cls.__bases__[1:])
+        cls._set_olds()

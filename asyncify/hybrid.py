@@ -35,6 +35,9 @@ class HybridFunction(Generic[T_sync, T_async]):
 
         self.name_regex = re.compile(rf'\(*{self._name}\)*\s*')
 
+    def __repr__(self) -> str:
+        return f'HybridFunction({self._name!r}, {self.sync_callback!r}, {self.async_callback!r})'
+
     @property
     def __name__(self) -> str:
         return self._name

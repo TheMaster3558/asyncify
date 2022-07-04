@@ -40,6 +40,9 @@ class AsyncIterable(Generic[T]):
         self.before = before
         self.after = after
 
+    def __repr__(self) -> str:
+        return f'AsyncIterable({self.iterator!r}, before={self.before!r}, after={self.after!r})'
+
     def __await__(self) -> Generator[Any, Any, List[T]]:
         return self.flatten().__await__()
 
