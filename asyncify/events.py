@@ -57,6 +57,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
     .. versionadded:: 1.1
     """
+
     _OLDS: Dict[str, Callable[..., Any]] = {}
 
     def __init__(self, *args: Any, **kwargs: Any):
@@ -75,8 +76,10 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             cls._OLDS['set_child_watcher'] = cls.set_child_watcher
 
     def __repr__(self) -> str:
-        return f'<EventsEventLoopPolicy base={self.__class__.__bases__[0]!r},' \
-               f' registered_events={self._registered_events!r}>'
+        return (
+            f'<EventsEventLoopPolicy base={self.__class__.__bases__[0]!r},'
+            f' registered_events={self._registered_events!r}>'
+        )
 
     def event(self, func: Callable[P, T]) -> Callable[P, T]:
         """|deco|
