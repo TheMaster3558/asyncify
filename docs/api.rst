@@ -25,7 +25,8 @@ Classes
 
 Iterables
 ----------
-.. autofunction:: async_iter
+.. autoclass:: AsyncIterable
+  :members:
 
 |
 
@@ -51,4 +52,5 @@ Sleep
 
 Hybrid
 -------
-.. autofunction:: hybrid_function
+.. autoclass:: HybridFunction
+  :members:

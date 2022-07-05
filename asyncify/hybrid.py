@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from ._types import Coro
 
 
-__all__ = ('HybridFunction', 'hybrid_function')
+__all__ = ('HybridFunction',)
 
 
 T_sync = TypeVar('T_sync')
@@ -18,6 +18,47 @@ T_async = TypeVar('T_async')
 
 
 class HybridFunction(Generic[T_sync, T_async]):
+    """
+    Do multiple things depending on whether it was awaited or not!
+
+    .. versionchanged:: 2.0
+        Changed from function `hybrid_function` to class `HybridFunction`
+
+
+    Parameters
+    ----------
+    name: :class:`str`
+        The name of the new function. This must be the same as the function name to work.
+    sync_callback: ``Callable[..., Any]``
+        The callable to call if it is not awaited.
+    async_callback: ``Callable[..., Coroutine]``
+        The callable to call if it is awaited.
+
+
+    Example
+    --------
+    .. code:: py
+
+        import asyncify
+        import discord  # discord.py example
+
+        class Client(discord.Client):
+            get_or_fetch_user = asyncify.HybridFunction(
+                                'get_or_fetch_user',
+                                 discord.Client.get_user,
+                                 discord.Client.fetch_user
+            )
+
+        client = Client()
+
+        client.get_or_fetch_user(739510612652195850)  # sync cache lookup
+        await client.get_or_fetch_user(739510612652195850)  # async api call
+
+
+    .. warning::
+        Make the to name the function uniquely. Functions with the same name could be called unexpectedly.
+    """
+
     regex = re.compile(r'await\s+(\w|\.)*\s*\(.*\)')
     name_regex: re.Pattern[str]
 
@@ -27,6 +68,12 @@ class HybridFunction(Generic[T_sync, T_async]):
         sync_callback: Callable[..., T_sync],
         async_callback: Callable[..., Coro[T_async]],
     ):
+        if not inspect.isfunction(sync_callback):
+            raise TypeError(f'Expected callable function, got {sync_callback.__class__.__name__!r}')
+
+        if not inspect.iscoroutinefunction(async_callback):
+            raise TypeError(f'Expected a callable coroutine function, got {async_callback.__class__.__name__!r}')
+
         self._name = name
         self.sync_callback = sync_callback
         self.async_callback = async_callback
@@ -80,52 +127,3 @@ class HybridFunction(Generic[T_sync, T_async]):
         if self._check_regex(code_context):
             return self.async_callback(*args, **kwargs)
         return self.sync_callback(*args, **kwargs)
-
-
-def hybrid_function(
-    name: str, sync_callback: Callable[..., T_sync], async_callback: Callable[..., Coro[T_async]]
-) -> HybridFunction[T_sync, T_async]:
-    """
-    Do multiple things depending on whether it was awaited or not!
-
-
-    Parameters
-    ----------
-    name: :class:`str`
-        The name of the new function. This must be the same as the function name to work.
-    sync_callback: ``Callable[..., Any]``
-        The callable to call if it is not awaited.
-    async_callback: ``Callable[..., Coroutine]``
-        The callable to call if it is awaited.
-
-
-    Example
-    --------
-    .. code:: py
-
-        import asyncify
-        import discord  # discord.py example
-
-        class Client(discord.Client):
-            get_or_fetch_user = asyncify.hybrid_function(
-                                'get_or_fetch_user',
-                                 discord.Client.get_user,
-                                 discord.Client.fetch_user
-            )
-
-        client = Client()
-
-        client.get_or_fetch_user(739510612652195850)  # sync cache lookup
-        await client.get_or_fetch_user(739510612652195850)  # async api call
-
-
-    .. warning::
-        Make the to name the function uniquely. Functions with the same name could be called unexpectedly.
-    """
-    if not inspect.isfunction(sync_callback):
-        raise TypeError(f'Expected callable function, got {sync_callback.__class__.__name__!r}')
-
-    if not inspect.iscoroutinefunction(async_callback):
-        raise TypeError(f'Expected a callable coroutine function, got {async_callback.__class__.__name__!r}')
-
-    return HybridFunction[T_sync, T_async](name, sync_callback, async_callback)
