@@ -105,8 +105,8 @@ def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
     TypeError
         The object passed was not a coroutine function.
     """
-    if not inspect.isfunction(func):
-        raise TypeError(f'Expected a callable function, got {func.__class__.__name__!r}')
+    if not inspect.iscoroutinefunction(func):
+        raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
 
     @functools.wraps(func)
     def sync_func(*args: P.args, **kwargs: P.kwargs) -> T:

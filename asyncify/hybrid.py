@@ -122,4 +122,10 @@ def hybrid_function(
     .. warning::
         Make the to name the function uniquely. Functions with the same name could be called unexpectedly.
     """
+    if not inspect.isfunction(sync_callback):
+        raise TypeError(f'Expected callable function, got {sync_callback.__class__.__name__!r}')
+
+    if not inspect.iscoroutinefunction(async_callback):
+        raise TypeError(f'Expected a callable coroutine function, got {async_callback.__class__.__name__!r}')
+
     return HybridFunction[T_sync, T_async](name, sync_callback, async_callback)
