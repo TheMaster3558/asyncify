@@ -54,3 +54,10 @@ Hybrid
 -------
 .. autoclass:: HybridFunction
   :members:
+
+|
+
+Group
+------
+.. autoclass:: TaskGroup
+  :members:

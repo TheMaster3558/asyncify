@@ -3,12 +3,13 @@
 from .cls import *
 from .func import *
 from .events import *
+from .group import *
 from .hybrid import *
 from .iterable import *
 from .sleep import *
 
 
-__all__ = cls.__all__ + func.__all__ + events.__all__ + hybrid.__all__ + iterable.__all__
+__all__ = cls.__all__ + func.__all__ + events.__all__ + group.__all__ + hybrid.__all__ + iterable.__all__
 
 
 __title__ = 'asyncify'
