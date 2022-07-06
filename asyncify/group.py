@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import inspect
-from typing import TYPE_CHECKING, Any, Coroutine, Generator, Generic, List, Tuple, TypeVar
+from typing import TYPE_CHECKING, Any, Coroutine, Generator, Generic, List, Optional, Tuple, Type, TypeVar, Union
 
 if TYPE_CHECKING:
+    from types import TracebackType
     from typing_extensions import Self
 
 
@@ -88,7 +89,7 @@ class TaskGroup(Generic[T]):
         """
         return self.pending_tasks + self.finished_tasks
 
-    def get_results(self, *, return_exceptions: bool = False) -> Generator[Tuple[int, T], None, None]:
+    def get_results(self, *, return_exceptions: bool = False) -> Generator[Tuple[int, Union[T, Exception]], None, None]:
         """
         Get the results of the tasks in the TaskGroup.
 
@@ -118,9 +119,11 @@ class TaskGroup(Generic[T]):
 
             yield task_id, result
 
-    def create_task(self, coro: Coroutine[Any, Any, T]):
+    def create_task(self, coro: Coroutine[Any, Any, T]) -> Optional[asyncio.Task[T]]:
         """
         Wrap a coroutine into a task, schedule it, and bind it to a TaskGroup.
+        If the TaskGroup has not been started with `async with` yet, it will add the coroutine to be
+        scheduled with it is started. In this case it will not return :class:`asyncio.Task`
 
         Parameters
         ----------
@@ -144,7 +147,7 @@ class TaskGroup(Generic[T]):
             task = asyncio.create_task(coro)
             self._pending_tasks.append((task_id, task))
 
-            def add_to_finished(_):
+            def add_to_finished(_: Any):
                 try:
                     self._pending_tasks.remove((task_id, task))
                 except ValueError:
@@ -162,6 +165,8 @@ class TaskGroup(Generic[T]):
 
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(
+        self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]
+    ) -> None:
         await asyncio.gather(*(task for _, task in self._pending_tasks), return_exceptions=True)
         self._state = _States.FINISHED
