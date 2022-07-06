@@ -2,7 +2,19 @@ from __future__ import annotations
 
 import asyncio
 import inspect
-from typing import TYPE_CHECKING, Any, Coroutine, Generator, Generic, List, Optional, Tuple, Type, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Coroutine,
+    Generator,
+    Generic,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -24,6 +36,8 @@ class _States:
 class TaskGroup(Generic[T]):
     """
     Group tasks together!
+
+    .. versionadded:: 2.0
 
     Example
     --------
@@ -89,7 +103,9 @@ class TaskGroup(Generic[T]):
         """
         return self.pending_tasks + self.finished_tasks
 
-    def get_results(self, *, return_exceptions: bool = False) -> Generator[Tuple[int, Union[T, Exception]], None, None]:
+    def get_results(
+        self, *, return_exceptions: bool = False
+    ) -> Generator[Tuple[int, Union[T, Exception]], None, None]:
         """
         Get the results of the tasks in the TaskGroup.
 
@@ -166,7 +182,10 @@ class TaskGroup(Generic[T]):
         return self
 
     async def __aexit__(
-        self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
     ) -> None:
         await asyncio.gather(*(task for _, task in self._pending_tasks), return_exceptions=True)
         self._state = _States.FINISHED
