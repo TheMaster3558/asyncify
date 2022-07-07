@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import enum
 import inspect
 from typing import (
     TYPE_CHECKING,
@@ -27,10 +28,10 @@ __all__ = ('TaskGroup',)
 T = TypeVar('T')
 
 
-class _States:
-    NOT_STARTED = 0
-    RUNNING = 1
-    FINISHED = 2
+class _States(enum.Enum):
+    NOT_STARTED = 'NOT_STARTED'
+    RUNNING = 'RUNNING'
+    FINISHED = 'FINISHED'
 
 
 class TaskGroup(Generic[T]):
