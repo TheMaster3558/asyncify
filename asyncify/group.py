@@ -148,7 +148,7 @@ class TaskGroup(Generic[T]):
 
         Returns
         -------
-        :class:`asyncio.Task`
+        Optional[:class:`asyncio.Task`]
         """
         if self._state is _States.NOT_STARTED:
             self._unscheduled.append(coro)
