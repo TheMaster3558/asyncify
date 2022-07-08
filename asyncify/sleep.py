@@ -18,7 +18,7 @@ async def sleep_until(until: datetime.datetime) -> None:
     Raises
     -------
     TypeError
-        `until` is not `datetime.datetime.`
+        `until` is not :class:`datetime.datetime.`
     """
     if not isinstance(until, datetime.datetime):  # type: ignore
         raise TypeError(f'Expected datetime.datetime, not {until.__class__.__name__!r}')

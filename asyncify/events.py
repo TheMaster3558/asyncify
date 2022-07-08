@@ -87,7 +87,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         Register a function to be called when an event loop policy method is called.
         The name of the functions should match the event loop policy method.
         The valid names are ``get_event_loop``, ``set_event_loop``, ``new_event_loop``,
-        ``get_child_watcher``, ``set_child_watcher``
+        ``get_child_watcher``, and ``set_child_watcher``.
 
         Example
         ---------
@@ -160,7 +160,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         ------------
         policy_cls: Type[:class:`asyncio.AbstractEventLoopPolicy`]
             This class must inherit from
-            `asyncio.AbstractEventLoopPolicy <https://docs.python.org/3/library/asyncio-policy.html#asyncio.AbstractEventLoopPolicy>`_
+            `asyncio.AbstractEventLoopPolicy <https://docs.python.org/3/library/asyncio-policy.html#asyncio.AbstractEventLoopPolicy>`_.
 
 
         This example uses `uvloop`.

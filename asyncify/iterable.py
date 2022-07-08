@@ -36,9 +36,9 @@ class AsyncIterable(Generic[T]):
     ------------
     iterable: :class:`Iterable`
         The iterable to iterator over.
-    before: Optional[``Callable[<no_parameters>, Awaitable[Any]]``]
+    before: Optional[``async_function``]
         An optional asynchronous callable for before the iteration.
-    after: Optional[``Callable[<no_parameters>, Awaitable[Any]]``]
+    after: Optional[``async_function``]
         An optional asynchronous callable for after the iteration.
 
 
@@ -60,7 +60,7 @@ class AsyncIterable(Generic[T]):
         async def main():
             sleep = functools.partial(asyncio.sleep, 1)
 
-            async for number in async_iter([1, 2, 3], sleep, before=True):
+            async for number in asyncify.AsyncIterable([1, 2, 3], before=sleep):
                 print(f'{number} seconds have passed.')
 
     Raises
