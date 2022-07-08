@@ -59,9 +59,9 @@ class TaskGroup(Generic[T]):
                     group.create_task(get('https://non-existent-website.com/', session))
 
             for task_id, result in group.get_results(return_exceptions=True):
-                print(task_id)  #  first time is <class 'int'>
+                print(task_id)  # 0 then 1
+                print(type(result))  # first time is <class 'int'>
                 # second is <class 'aiohttp.client_exceptions.ClientConnectorError'>
-                print(type(result))  # 0 then 1
     """
 
     def __init__(self):
