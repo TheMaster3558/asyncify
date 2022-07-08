@@ -130,7 +130,6 @@ class TaskGroup(Generic[T]):
                     if not return_exceptions:
                         raise
                     result = exc
-
             except asyncio.InvalidStateError:
                 raise RuntimeError('TaskGroup closed early.')
 
