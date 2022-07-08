@@ -69,7 +69,7 @@ class TaskGroup(Generic[T]):
         self._pending_tasks: List[Tuple[int, asyncio.Task[T]]] = []
         self._finished_tasks: List[Tuple[int, asyncio.Task[T]]] = []
 
-        self._state: int = 0
+        self._state: _States = _States.NOT_STARTED
 
     @property
     def pending_tasks(self) -> Tuple[Tuple[int, asyncio.Task[T]], ...]:
