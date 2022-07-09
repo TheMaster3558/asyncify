@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import enum
 import inspect
-import warnings
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -17,8 +16,6 @@ from typing import (
     overload,
     Union,
 )
-
-import async_timeout
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -91,7 +88,7 @@ class TaskGroup(Generic[T]):
     @property
     def finished_tasks(self) -> Tuple[Tuple[int, asyncio.Task[T]], ...]:
         """
-        The tasks that have finished.
+        The tasks that have finished or been cancelled.
 
         Returns
         --------
