@@ -6,7 +6,6 @@ import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
-    Coroutine,
     Generator,
     Generic,
     List,
@@ -14,12 +13,14 @@ from typing import (
     Tuple,
     Type,
     TypeVar,
+    overload,
     Union,
 )
 
 if TYPE_CHECKING:
     from types import TracebackType
-    from typing_extensions import Self
+    from typing_extensions import Literal, Self
+    from ._types import Coro
 
 
 __all__ = ('TaskGroup',)
@@ -65,7 +66,7 @@ class TaskGroup(Generic[T]):
     """
 
     def __init__(self):
-        self._unscheduled: List[Coroutine[Any, Any, T]] = []
+        self._unscheduled: List[Coro[T]] = []
         self._pending_tasks: List[Tuple[int, asyncio.Task[T]]] = []
         self._finished_tasks: List[Tuple[int, asyncio.Task[T]]] = []
 
@@ -104,6 +105,16 @@ class TaskGroup(Generic[T]):
         """
         return self.pending_tasks + self.finished_tasks
 
+    @overload
+    def get_results(self, *, return_exceptions: Literal[False]) -> Generator[Tuple[int, T], None, None]:
+        ...
+
+    @overload
+    def get_results(
+        self, *, return_exceptions: Literal[True]
+    ) -> Generator[Tuple[int, Union[T, Exception]], None, None]:
+        ...
+
     def get_results(
         self, *, return_exceptions: bool = False
     ) -> Generator[Tuple[int, Union[T, Exception]], None, None]:
@@ -135,7 +146,7 @@ class TaskGroup(Generic[T]):
 
             yield task_id, result
 
-    def create_task(self, coro: Coroutine[Any, Any, T]) -> Optional[asyncio.Task[T]]:
+    def create_task(self, coro: Coro[T]) -> Optional[asyncio.Task[T]]:
         """
         Wrap a coroutine into a task, schedule it, and bind it to a TaskGroup.
         If the TaskGroup has not been started with `async with` yet, it will add the coroutine to be
