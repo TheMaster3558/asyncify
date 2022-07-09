@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import enum
 import inspect
+import warnings
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -16,6 +17,8 @@ from typing import (
     overload,
     Union,
 )
+
+import async_timeout
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -40,6 +43,8 @@ class TaskGroup(Generic[T]):
     Group tasks together!
 
     .. versionadded:: 2.0
+
+    Parameters
 
     Example
     --------
@@ -135,14 +140,11 @@ class TaskGroup(Generic[T]):
 
         for task_id, task in self._finished_tasks:
             try:
-                try:
-                    result = task.result()
-                except Exception as exc:
-                    if not return_exceptions:
-                        raise
-                    result = exc
-            except asyncio.InvalidStateError:
-                raise RuntimeError('TaskGroup closed early.')
+                result = task.result()
+            except Exception as exc:
+                if not return_exceptions:
+                    raise exc
+                result = exc
 
             yield task_id, result
 
@@ -186,10 +188,8 @@ class TaskGroup(Generic[T]):
 
     async def __aenter__(self) -> Self:
         self._state = _States.RUNNING
-
         for coro in self._unscheduled:
             self.create_task(coro)
-
         return self
 
     async def __aexit__(
@@ -199,4 +199,7 @@ class TaskGroup(Generic[T]):
         exc_tb: Optional[TracebackType],
     ) -> None:
         await asyncio.gather(*(task for _, task in self._pending_tasks), return_exceptions=True)
+        self._finished_tasks.extend(self._pending_tasks)
+        self._pending_tasks.clear()
+
         self._state = _States.FINISHED
