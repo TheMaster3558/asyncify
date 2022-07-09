@@ -141,6 +141,8 @@ class TaskGroup(Generic[T]):
         for task_id, task in self._finished_tasks:
             try:
                 result = task.result()
+            except asyncio.InvalidStateError as exc:
+                raise RuntimeError('TaskGroup results fetched before tasks are finished.') from exc
             except Exception as exc:
                 if not return_exceptions:
                     raise exc
