@@ -232,8 +232,7 @@ class TaskGroup(Generic[T]):
             return
 
         done, pending = await asyncio.wait(
-            [task for _, task in self._pending_tasks],
-            return_when=asyncio.FIRST_EXCEPTION
+            [task for _, task in self._pending_tasks], return_when=asyncio.FIRST_EXCEPTION
         )
         for task in done:
             for t_id, t in self._pending_tasks:
@@ -243,6 +242,7 @@ class TaskGroup(Generic[T]):
             try:
                 task.result()
             except asyncio.CancelledError:
-                raise asyncio.TimeoutError
+                if self._state is _States.TIMEOUTED:
+                    raise asyncio.TimeoutError
 
         await self.__aexit__(exc_type, exc_val, exc_tb)
