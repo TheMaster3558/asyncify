@@ -4,13 +4,14 @@ import asyncio
 import inspect
 import functools
 
-from typing import TYPE_CHECKING, Any, Callable, Coroutine, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, TypeVar
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec
+    from ._types import CallableT, Coro
 
 
-__all__ = ('asyncify_func', 'syncify_func')
+__all__ = ('asyncify_func', 'syncify_func', 'taskify_func')
 
 
 T = TypeVar('T')
@@ -21,7 +22,7 @@ else:
     P = TypeVar('P')
 
 
-def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
+def asyncify_func(func: Callable[P, T]) -> Callable[P, Coro[T]]:
     """|deco|
 
     Make a synchronous function into an asynchronous function by running it in a separate thread.
@@ -68,7 +69,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coroutine[Any, Any, T]]:
     return async_func
 
 
-def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
+def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
     """|deco|
 
     Make an asynchronous function a synchronous function.
@@ -98,7 +99,7 @@ def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
             loop.run_until_complete(coroutine_func())
 
     .. warning::
-        There must be a running event loop.
+        There must be a running event loop to call it.
 
     Raises
     -------
@@ -114,3 +115,72 @@ def syncify_func(func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, T]:
         return loop.run_until_complete(func(*args, **kwargs))
 
     return sync_func
+
+
+class taskify_func:
+    """|deco|
+
+    Create an asyncio task whenever you call the function!
+
+    Example
+    -------
+    .. code:: py
+
+        import asyncio
+        import asyncify
+
+        @asyncify.taskify_func
+        async def sleep_then_print():
+            await asyncio.sleep(5)
+            print('Done sleeping!')
+
+        async def main():
+            task = sleep_then_print():
+            print(task) #  <class '_asyncio.Task'>
+
+            # you can even use this as a normal coroutine function
+            await sleep_then_print()
+
+
+    .. warning::
+        There must be a running event loop to call it.
+
+    Raises
+    -------
+    TypeError
+        The object passed was not a coroutine function.
+    """
+    def __init__(self, func: Callable[..., Coro[T]]):
+        if not inspect.iscoroutinefunction(func):
+            raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
+
+        self.func = func
+        self._done_callbacks: Dict[str, Callable[[asyncio.Task[T]], Any]] = {}
+
+        functools.update_wrapper(self, func)
+
+    def __call__(self, *args, **kwargs) -> asyncio.Task[T]:
+        task = asyncio.create_task(self.func(*args, **kwargs))
+        return task
+
+    def default_done_callback(self, callback: CallableT) -> CallableT:
+        """|deco|
+
+        Add a callback to be added to the tasks done callbacks with `add_done_callback <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20task#asyncio.Task.add_done_callback>`_.
+        """
+        self._done_callbacks[callback.__name__] = callback
+        return callback
+
+    def remove_default_done_callback(self, name: str) -> None:
+        """
+        Remove a done callback that would be added to the task.
+
+        Parameters
+        ----------
+        name: :class:`str`
+            The name of the callback.
+        """
+        if name not in self._done_callbacks:
+            raise RuntimeError(f'{name} is not a registered done callback.')
+
+

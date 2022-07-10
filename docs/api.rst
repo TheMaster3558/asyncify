@@ -13,6 +13,14 @@ Functions
 
 |
 
+.. autoclass:: taskify_func
+  :members:
+  :exclude-members: default_done_callback
+
+  .. autodecorator:: asyncify.taskify_func.default_done_callback()
+
+|
+
 Classes
 --------
 .. autodecorator:: asyncify_class
