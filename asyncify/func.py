@@ -182,8 +182,9 @@ class taskify_func(Generic[T]):
 
         for callback in self._done_callbacks.values():
             if self._instance:
-                callback = functools.partial(callback, self._instance)
-            task.add_done_callback(callback)
+                callback = functools.partial(callback, self._instance)  # type: ignore
+            task.add_done_callback(callback)  # type: ignore
+            # the type checker doesn't know that `self` needs to be manually passed in.
 
         return task
 
