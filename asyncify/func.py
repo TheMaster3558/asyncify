@@ -4,17 +4,18 @@ import asyncio
 import inspect
 import functools
 
-from typing import TYPE_CHECKING, Any, Callable, Dict, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, TypeVar, Optional
 
 if TYPE_CHECKING:
-    from typing_extensions import ParamSpec
-    from ._types import CallableT, Coro
+    from typing_extensions import ParamSpec, Self
+    from ._types import Coro
 
 
 __all__ = ('asyncify_func', 'syncify_func', 'taskify_func')
 
 
 T = TypeVar('T')
+T_ret = TypeVar('T_ret')
 
 if TYPE_CHECKING:
     P = ParamSpec('P')
@@ -117,7 +118,7 @@ def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
     return sync_func
 
 
-class taskify_func:
+class taskify_func(Generic[T]):
     """|deco|
 
     Create an asyncio task whenever you call the function!
@@ -162,15 +163,38 @@ class taskify_func:
 
         functools.update_wrapper(self, func)
 
-    def __call__(self, *args, **kwargs) -> asyncio.Task[T]:
+        self._instance: Optional[object] = None
+
+    def __repr__(self) -> str:
+        return f'taskify_func({self.func})'
+
+    def __get__(self, instance: object, owner: type) -> Self:
+        new_self = self.__class__(self.func)
+        new_self._done_callbacks = self._done_callbacks
+        new_self._instance = self
+        return new_self
+
+    def __call__(self, *args: Any, **kwargs: Any) -> asyncio.Task[T]:
+        if self._instance:
+            args = (self._instance, *args)
+
         task = asyncio.create_task(self.func(*args, **kwargs))
+
+        for callback in self._done_callbacks.values():
+            if self._instance:
+                callback = functools.partial(callback, self._instance)
+            task.add_done_callback(callback)
+
         return task
 
-    def default_done_callback(self, callback: CallableT) -> CallableT:
+    def default_done_callback(self, callback: Callable[[asyncio.Task[T]], T_ret]) -> Callable[[asyncio.Task[T]], T_ret]:
         """|deco|
 
         Add a callback to be added to the tasks done callbacks with `add_done_callback <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20task#asyncio.Task.add_done_callback>`_.
         """
+        if not inspect.isfunction(callback):
+            raise TypeError(f'Expected a callable function, got {callback.__class__.__name__!r}')
+
         self._done_callbacks[callback.__name__] = callback
         return callback
 
