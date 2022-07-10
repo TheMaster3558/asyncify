@@ -122,6 +122,8 @@ class taskify_func:
 
     Create an asyncio task whenever you call the function!
 
+    ..versionadded:: 2.0
+
     Example
     -------
     .. code:: py
