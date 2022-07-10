@@ -43,6 +43,9 @@ class TaskGroup(Generic[T]):
     .. versionadded:: 2.0
 
     Parameters
+    -----------
+    timeout_in: Optional[:class:`float`]
+        A timeout for the tasks. On the timeout all tasks are cancelled and :exc:`asyncio.TimeoutError` is raised.
 
     Example
     --------
