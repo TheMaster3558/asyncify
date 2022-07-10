@@ -33,6 +33,7 @@ class _States(enum.Enum):
     NOT_STARTED = 'NOT_STARTED'
     RUNNING = 'RUNNING'
     FINISHED = 'FINISHED'
+    TIMEOUTED = 'TIMEOUTED'
 
 
 class TaskGroup(Generic[T]):
@@ -67,12 +68,31 @@ class TaskGroup(Generic[T]):
                 # second is <class 'aiohttp.client_exceptions.ClientConnectorError'>
     """
 
-    def __init__(self):
+    def __init__(self, *, timeout_in: Optional[float] = None):
         self._unscheduled: List[Coro[T]] = []
         self._pending_tasks: List[Tuple[int, asyncio.Task[T]]] = []
         self._finished_tasks: List[Tuple[int, asyncio.Task[T]]] = []
 
         self._state: _States = _States.NOT_STARTED
+
+        self._handle: Optional[asyncio.Handle] = None
+        if timeout_in:
+            self.change_timeout(timeout_in)
+
+    def __raise_timeout(self) -> None:
+        if self._state is not _States.FINISHED:
+            self._state = _States.TIMEOUTED
+            self.cancel_all_tasks()
+
+    def change_timeout(self, timeout_in: float):
+        if self._state not in (_States.NOT_STARTED, _States.RUNNING):
+            raise RuntimeError('TaskGroup has already finished.')
+
+        if self._handle:
+            self._handle.cancel()
+
+        loop = asyncio.get_running_loop()
+        self._handle = loop.call_later(timeout_in, self.__raise_timeout)
 
     @property
     def pending_tasks(self) -> Tuple[Tuple[int, asyncio.Task[T]], ...]:
@@ -138,9 +158,9 @@ class TaskGroup(Generic[T]):
         for task_id, task in self._finished_tasks:
             try:
                 result = task.result()
-            except asyncio.InvalidStateError as exc:
-                raise RuntimeError('TaskGroup results fetched before tasks are finished.') from exc
             except Exception as exc:
+                if isinstance(exc, asyncio.InvalidStateError):
+                    raise RuntimeError('TaskGroup results fetched before tasks are finished.') from exc
                 if not return_exceptions:
                     raise exc
                 result = exc
@@ -175,7 +195,7 @@ class TaskGroup(Generic[T]):
             task = asyncio.create_task(coro)
             self._pending_tasks.append((task_id, task))
 
-            def add_to_finished(_: Any):
+            def add_to_finished(_: Any) -> None:
                 try:
                     self._pending_tasks.remove((task_id, task))
                 except ValueError:
@@ -184,6 +204,17 @@ class TaskGroup(Generic[T]):
 
             task.add_done_callback(add_to_finished)
             return task
+
+    def cancel_all_tasks(self) -> None:
+        """
+        Cancel all currently unfinished tasks.
+        """
+        for _, task in self._pending_tasks:
+            if not task.done():  # task should never be finished
+                task.cancel()
+
+        self._finished_tasks.extend(self._pending_tasks)
+        self._pending_tasks.clear()
 
     async def __aenter__(self) -> Self:
         self._state = _States.RUNNING
@@ -197,8 +228,21 @@ class TaskGroup(Generic[T]):
         exc_val: Optional[BaseException],
         exc_tb: Optional[TracebackType],
     ) -> None:
-        await asyncio.gather(*(task for _, task in self._pending_tasks), return_exceptions=True)
-        self._finished_tasks.extend(self._pending_tasks)
-        self._pending_tasks.clear()
+        if not self._pending_tasks:
+            return
 
-        self._state = _States.FINISHED
+        done, pending = await asyncio.wait(
+            [task for _, task in self._pending_tasks],
+            return_when=asyncio.FIRST_EXCEPTION
+        )
+        for task in done:
+            for t_id, t in self._pending_tasks:
+                if task is t:
+                    self._pending_tasks.remove((t_id, t))
+                    self._finished_tasks.append((t_id, t))
+            try:
+                task.result()
+            except asyncio.CancelledError:
+                raise asyncio.TimeoutError
+
+        await self.__aexit__(exc_type, exc_val, exc_tb)
