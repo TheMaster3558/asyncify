@@ -152,6 +152,7 @@ class taskify_func:
     TypeError
         The object passed was not a coroutine function.
     """
+
     def __init__(self, func: Callable[..., Coro[T]]):
         if not inspect.iscoroutinefunction(func):
             raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
@@ -184,5 +185,3 @@ class taskify_func:
         """
         if name not in self._done_callbacks:
             raise RuntimeError(f'{name} is not a registered done callback.')
-
-
