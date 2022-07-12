@@ -188,7 +188,9 @@ class taskify_func(Generic[T]):
 
         return task
 
-    def default_done_callback(self, callback: Callable[[asyncio.Task[T]], T_ret]) -> Callable[[asyncio.Task[T]], T_ret]:
+    def default_done_callback(
+        self, callback: Callable[[asyncio.Task[T]], T_ret]
+    ) -> Callable[[asyncio.Task[T]], T_ret]:
         """|deco|
 
         Add a callback to be added to the tasks done callbacks with `add_done_callback <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20task#asyncio.Task.add_done_callback>`_.
