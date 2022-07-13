@@ -5,9 +5,6 @@ class MissingSentinel:
     def __repr__(self):
         return '...'
 
-    def __mul__(self, other: Any):
-        return 0
-
     def __eq__(self, other: Any):
         return False
 
