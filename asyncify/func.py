@@ -166,7 +166,7 @@ class taskify_func(Generic[T]):
         self._instance: Optional[object] = None
 
     def __repr__(self) -> str:
-        return f'taskify_func({self.func})'
+        return f'taskify_func({self.func!r})'
 
     def __get__(self, instance: object, owner: type) -> Self:
         new_self = self.__class__(self.func)
