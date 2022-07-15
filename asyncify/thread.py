@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import threading
-from typing import TYPE_CHECKING, Any, Coroutine, Type, TypeVar, Optional
+from typing import TYPE_CHECKING, Any, Coroutine, List, Type, TypeVar, Optional
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -44,8 +44,8 @@ class ThreadCoroutineExecutor(threading.Thread):
         super().__init__()
         self.wait = wait
         self._running = False
-        self._unfinished_futures = []
-        self._loop = asyncio.new_event_loop()
+        self._unfinished_futures: List[asyncio.Future[Any]] = []
+        self._loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
 
     def start(self) -> None:
         """
