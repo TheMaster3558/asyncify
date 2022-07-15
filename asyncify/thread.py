@@ -32,18 +32,13 @@ class ThreadCoroutineExecutor(threading.Thread):
         import asyncify
         from aioconsole import aexec
 
-        def future_done_callback(future):
-            print(f'The code finished the with result {future.exception() or future.result()}')
-
         async def main():
             async with asyncify.ThreadCoroutineExecutor(wait=True) as thread:
                 while True:
                     code = input('Type code here: ')
-                    # if code is 'import time; time.sleep(5)' it will block the event loop
+                    # if code is 'import time; time.sleep(5); print('Done') it will block the event loop
                     # the solution is to run it in a separate thread
-                    future = thread.execute(aexec(code))
-                    future.add_done_callback(future_done_callback)
-                    # print the result once finished
+                    thread.execute(aexec(code))
     """
     def __init__(self, wait: bool = False):
         super().__init__()
