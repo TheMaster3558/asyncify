@@ -69,3 +69,13 @@ Group
 ------
 .. autoclass:: TaskGroup
   :members:
+
+|
+
+Threads
+--------
+.. autoclass:: ThreadCoroutineExecutor
+  :members:
+  :exclude-members: run
+
+|

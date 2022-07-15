@@ -6,7 +6,6 @@ import queue
 from typing import TYPE_CHECKING, Any, Coroutine, Tuple, Type, TypeVar, Optional
 
 if TYPE_CHECKING:
-    import concurrent.futures
     from types import TracebackType
     from typing_extensions import Self
 
@@ -18,6 +17,34 @@ T = TypeVar('T')
 
 
 class ThreadCoroutineExecutor(threading.Thread):
+    """
+    Run coroutines in separate threads easily!
+
+    Parameters
+    -----------
+    wait: :class:`bool`
+        Whether to wait for all tasks to finish before exiting context manager. Defaults to ``False``.
+
+    Example
+    --------
+    .. code:: py
+
+        import asyncify
+        from aioconsole import aexec
+
+        def future_done_callback(future):
+            print(f'The code finished the with result {future.exception() or future.result()}')
+
+        async def main():
+            async with asyncify.ThreadCoroutineExecutor(wait=True) as thread:
+                while True:
+                    code = input('Type code here: ')
+                    # if code is 'import time; time.sleep(5)' it will block the event loop
+                    # the solution is to run it in a separate thread
+                    future = thread.execute(aexec(code))
+                    future.add_done_callback(future_done_callback)
+                    # print the result once finished
+    """
     def __init__(self, wait: bool = False):
         super().__init__()
         self._running = False
@@ -29,6 +56,12 @@ class ThreadCoroutineExecutor(threading.Thread):
         self._loop = asyncio.new_event_loop()
 
     def start(self) -> None:
+        """
+        Start the thread and its event loop.
+
+        .. note::
+            It is recommended to use `async with` instead.
+        """
         self._running = True
         super().start()
 
@@ -37,10 +70,25 @@ class ThreadCoroutineExecutor(threading.Thread):
         self._loop.run_forever()
 
     def close(self) -> None:
+        """
+        Stop the event loop and the thread will join the main thread.
+        """
         self._running = False
         self._loop.call_soon_threadsafe(self._loop.stop)
 
     def execute(self, coro: Coroutine[Any, Any, T]) -> asyncio.Future[T]:
+        """
+        Execute a coroutine within the thread.
+
+        Parameters
+        ----------
+        coro: ``Coroutine``
+            The coroutine to execute. It must be a coroutine.
+
+        Returns
+        -------
+        :class:`asyncio.Future`
+        """
         future = asyncio.wrap_future(asyncio.run_coroutine_threadsafe(coro, self._loop))
         self._unfinished_futures.append(future)
         future.add_done_callback(self._remove_from_unfinished)
