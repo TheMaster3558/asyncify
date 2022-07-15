@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import threading
-import queue
-from typing import TYPE_CHECKING, Any, Coroutine, Tuple, Type, TypeVar, Optional
+from typing import TYPE_CHECKING, Any, Coroutine, Type, TypeVar, Optional
 
 if TYPE_CHECKING:
     from types import TracebackType
