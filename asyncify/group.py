@@ -234,7 +234,7 @@ class TaskGroup(Generic[T]):
         if not self._pending_tasks:
             return
 
-        done, pending = await asyncio.wait(
+        done, _ = await asyncio.wait(
             [task for _, task in self._pending_tasks], return_when=asyncio.FIRST_EXCEPTION
         )
         for task in done:

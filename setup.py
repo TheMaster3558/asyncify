@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 
 
 with open('asyncify/__init__.py') as f:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)  # type: ignore
 
 
 with open('README.rst', 'r') as rm:
