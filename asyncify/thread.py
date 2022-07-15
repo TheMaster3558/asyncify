@@ -40,12 +40,15 @@ class ThreadCoroutineExecutor(threading.Thread):
                     # the solution is to run it in a separate thread
                     thread.execute(aexec(code))
     """
+
     def __init__(self, wait: bool = False):
         super().__init__()
         self._running = False
         self.wait = wait
 
-        self._queue: queue.SimpleQueue[Tuple[asyncio.Future[Any], Coroutine[Any, Any, Any]]] = queue.SimpleQueue()
+        self._queue: queue.SimpleQueue[
+            Tuple[asyncio.Future[Any], Coroutine[Any, Any, Any]]
+        ] = queue.SimpleQueue()
         self._unfinished_futures = []
 
         self._loop = asyncio.new_event_loop()
@@ -100,10 +103,10 @@ class ThreadCoroutineExecutor(threading.Thread):
         return self
 
     async def __aexit__(
-            self,
-            exc_type: Optional[Type[BaseException]],
-            exc_val: Optional[BaseException],
-            exc_tb: Optional[TracebackType],
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
     ) -> None:
         try:
             await asyncio.gather(*self._unfinished_futures)
