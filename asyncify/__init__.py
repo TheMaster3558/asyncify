@@ -1,4 +1,5 @@
 # type: ignore
+# fmt: off
 
 from .cls import *
 from .func import *
@@ -11,13 +12,13 @@ from .thread import *
 
 
 __all__ = (
-    cls.__all__
-    + func.__all__
-    + events.__all__
-    + group.__all__
-    + hybrid.__all__
-    + iterable.__all__
-    + thread.__all__
+    cls.__all__ +
+    func.__all__ +
+    events.__all__ +
+    group.__all__ +
+    hybrid.__all__ +
+    iterable.__all__ +
+    thread.__all__
 )
 
 
