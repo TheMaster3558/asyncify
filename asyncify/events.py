@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import inspect
 import sys
 from typing import TYPE_CHECKING, Any, Callable, Dict, Set, Tuple, Type, TypeVar
 
@@ -107,7 +108,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         RuntimeError
             The name either is invalid or is not supported on Windows.
         """
-        if not isinstance(func, Callable):
+        if not TYPE_CHECKING and not inspect.isfunction(func):
             raise TypeError(f'Expected a callable, got {func.__class__.__name__!r}')
 
         if sys.platform == 'win32' and func.__name__ in _UNIX_ONLY_NAMES:

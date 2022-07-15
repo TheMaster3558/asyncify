@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 from .func import asyncify_func
 
@@ -56,7 +56,7 @@ def asyncify_class(cls: TypeT) -> TypeT:
     TypeError
         The object passed was not a class.
     """
-    if not isinstance(cls, Type):
+    if not TYPE_CHECKING and not inspect.isclass(cls):
         raise TypeError(f'Expected class, got {cls.__class__.__name__!r}')
 
     for name, func in inspect.getmembers(cls):
