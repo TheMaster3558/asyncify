@@ -163,7 +163,7 @@ class TaskGroup(Generic[T]):
                 result = task.result()
             except asyncio.InvalidStateError as exc:
                 raise RuntimeError('TaskGroup results fetched before tasks are finished.') from exc
-            except Exception as exc:
+            except BaseException as exc:
                 if not return_exceptions:
                     raise exc
                 result = exc
