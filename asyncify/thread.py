@@ -18,7 +18,7 @@ T = TypeVar('T')
 
 
 class ThreadCoroutineExecutor(threading.Thread):
-    def __init__(self, wait: bool = True):
+    def __init__(self, wait: bool = False):
         super().__init__()
         self._running = False
         self.wait = wait
@@ -26,40 +26,31 @@ class ThreadCoroutineExecutor(threading.Thread):
         self._queue: queue.SimpleQueue[Tuple[asyncio.Future[Any], Coroutine[Any, Any, Any]]] = queue.SimpleQueue()
         self._unfinished_futures = []
 
+        self._loop = asyncio.new_event_loop()
+
     def start(self) -> None:
         self._running = True
         super().start()
 
     def run(self) -> None:
-        while self._running:
-            try:
-                future, coroutine = self._queue.get(timeout=0.1)
-            except queue.Empty:
-                continue
+        asyncio.set_event_loop(self._loop)
+        self._loop.run_forever()
 
-            def set_result_or_exception(other_future: concurrent.futures.Future[Any]):
-                assert other_future.done()
-                try:
-                    result = other_future.result()
-                except BaseException as exc:
-                    other_future.set_exception(exc)
-                else:
-                    future.set_result(result)
-                try:
-                    self._unfinished_futures.remove(future)
-                except ValueError:
-                    pass
-
-            asyncio.run_coroutine_threadsafe(coroutine, future.get_loop()).add_done_callback(set_result_or_exception)
-
-    def stop(self):
+    def close(self) -> None:
         self._running = False
+        self._loop.call_soon_threadsafe(self._loop.stop)
 
-    def execute(self, coroutine: Coroutine[Any, Any, T]) -> asyncio.Future[T]:
-        future = asyncio.get_running_loop().create_future()
-        self._queue.put((future, coroutine))
+    def execute(self, coro: Coroutine[Any, Any, T]) -> asyncio.Future[T]:
+        future = asyncio.wrap_future(asyncio.run_coroutine_threadsafe(coro, self._loop))
         self._unfinished_futures.append(future)
+        future.add_done_callback(self._remove_from_unfinished)
         return future
+
+    def _remove_from_unfinished(self, future: asyncio.Future[Any]) -> None:
+        try:
+            self._unfinished_futures.remove(future)
+        except ValueError:
+            pass
 
     async def __aenter__(self) -> Self:
         self.start()
@@ -71,4 +62,7 @@ class ThreadCoroutineExecutor(threading.Thread):
             exc_val: Optional[BaseException],
             exc_tb: Optional[TracebackType],
     ) -> None:
-        self.stop()
+        try:
+            await asyncio.gather(*self._unfinished_futures)
+        finally:
+            self.close()
