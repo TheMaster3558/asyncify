@@ -59,7 +59,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
     .. versionadded:: 1.1
     """
 
-    _OLDS: Dict[str, Callable[..., Any]] = {}
+    _olds: Dict[str, Callable[..., Any]] = {}
 
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
@@ -68,13 +68,13 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
     @classmethod
     def _set_olds(cls) -> None:
-        cls._OLDS['get_event_loop'] = cls.get_event_loop
-        cls._OLDS['set_event_loop'] = cls.set_event_loop
-        cls._OLDS['new_event_loop'] = cls.new_event_loop
+        cls._olds['get_event_loop'] = cls.get_event_loop
+        cls._olds['set_event_loop'] = cls.set_event_loop
+        cls._olds['new_event_loop'] = cls.new_event_loop
 
         if sys.platform != 'win32':
-            cls._OLDS['get_child_watcher'] = cls.get_child_watcher
-            cls._OLDS['set_child_watcher'] = cls.set_child_watcher
+            cls._olds['get_child_watcher'] = cls.get_child_watcher
+            cls._olds['set_child_watcher'] = cls.set_child_watcher
 
     def __repr__(self) -> str:
         return (
@@ -146,7 +146,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         if name not in self._registered_events:
             raise RuntimeError(f'{name!r} is not a registered event.')
 
-        setattr(self, name, self._OLDS[name])
+        setattr(self, name, self._olds[name])
         self._registered_events.remove(name)
 
     @classmethod
