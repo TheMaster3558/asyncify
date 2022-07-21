@@ -76,8 +76,9 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         cls._olds['set_event_loop'] = cls.set_event_loop
         cls._olds['new_event_loop'] = cls.new_event_loop
 
-        if sys.platform != 'win32':
+        if hasattr(cls, 'get_child_watcher'):
             cls._olds['get_child_watcher'] = cls.get_child_watcher
+        if hasattr(cls, 'set_child_watcher'):
             cls._olds['set_child_watcher'] = cls.set_child_watcher
 
     def __repr__(self) -> str:
