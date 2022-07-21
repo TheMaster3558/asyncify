@@ -21,9 +21,13 @@ else:
     P = TypeVar('P')
 
 
-_UNIX_ONLY_NAMES: Tuple[str, ...] = ('get_child_watcher', 'set_child_watcher')
-
-_VALID_NAMES: Tuple[str, ...] = ('get_event_loop', 'set_event_loop', 'new_event_loop', *_UNIX_ONLY_NAMES)
+_VALID_NAMES: Tuple[str, ...] = (
+    'get_event_loop',
+    'set_event_loop',
+    'new_event_loop',
+    'get_child_watcher',
+    'set_child_watcher',
+)
 
 
 class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
@@ -110,9 +114,6 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         """
         if not TYPE_CHECKING and not inspect.isfunction(func):
             raise TypeError(f'Expected a callable, got {func.__class__.__name__!r}')
-
-        if sys.platform == 'win32' and func.__name__ in _UNIX_ONLY_NAMES:
-            raise RuntimeError(f'{func.__name__!r} is not supported on windows.')
 
         if func.__name__ not in _VALID_NAMES:
             raise RuntimeError(f'{func.__name__!r} is not a valid function name. {_VALID_NAMES} are valid.')
