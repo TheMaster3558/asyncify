@@ -43,9 +43,19 @@ class ThreadCoroutineExecutor(threading.Thread):
     def __init__(self, wait: bool = False):
         super().__init__()
         self.wait = wait
-        self._running = False
+        self._running: bool = False
         self._unfinished_futures: List[asyncio.Future[Any]] = []
         self._loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+
+    def is_running(self) -> bool:
+        """
+        Whether the event loop is running in the thread.
+
+        Returns
+        -------
+        :class:`bool`
+        """
+        return self._running and self._loop.is_running()
 
     def start(self) -> None:
         """
