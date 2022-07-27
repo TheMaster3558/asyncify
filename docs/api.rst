@@ -65,13 +65,6 @@ Hybrid
 
 |
 
-Group
-------
-.. autoclass:: TaskGroup
-  :members:
-
-|
-
 Threads
 --------
 .. autoclass:: ThreadCoroutineExecutor

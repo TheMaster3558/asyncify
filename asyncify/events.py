@@ -57,6 +57,10 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         asyncio.run(main())  # prints 'New event loop being created.'
         # asyncio.run creates an event loop with `new_event_loop`
 
+    .. note::
+        :class:`asyncify.EventsEventLoopPolicy` inherits from `asyncio.DefaultEventLoopPolicy <https://docs.python.org/3/library/asyncio-policy.html#asyncio.DefaultEventLoopPolicy>`_
+        unless changed with :func:`asyncify.EventsEventLoopPolicy.change_base_policy`.
+
     .. warning::
         `asyncio.get_event_loop` won't call its event if there is a running and set event loop.
 
@@ -111,7 +115,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         TypeError
             `func` is not a callable.
         RuntimeError
-            The name either is invalid or is not supported on Windows.
+            The name either is invalid.
         """
         if not TYPE_CHECKING and not inspect.isfunction(func):
             raise TypeError(f'Expected a callable, got {func.__class__.__name__!r}')

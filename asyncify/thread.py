@@ -19,6 +19,8 @@ class ThreadCoroutineExecutor(threading.Thread):
     """
     Run coroutines in separate threads easily!
 
+    .. versionadded:: 2.0
+
     Parameters
     -----------
     wait: :class:`bool`
@@ -113,6 +115,7 @@ class ThreadCoroutineExecutor(threading.Thread):
         exc_tb: Optional[TracebackType],
     ) -> None:
         try:
-            await asyncio.gather(*self._unfinished_futures)
+            if self.wait:
+                await asyncio.gather(*self._unfinished_futures)
         finally:
             self.close()

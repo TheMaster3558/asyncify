@@ -123,7 +123,7 @@ class taskify_func(Generic[T]):
 
     Create an asyncio task whenever you call the function!
 
-    ..versionadded:: 2.0
+    .. versionadded:: 2.0
 
     Example
     -------
