@@ -84,8 +84,8 @@ class AsyncIterable(Generic[T]):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
 
-        self.before = before
-        self.after = after
+        self.before: Optional[NoArgAwaitable[Any]] = before
+        self.after: Optional[NoArgAwaitable[Any]] = after
 
     def __repr__(self) -> str:
         return f'AsyncIterable({self.iterator!r}, before={self.before!r}, after={self.after!r})'
