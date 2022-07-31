@@ -60,7 +60,6 @@ class HybridFunction(Generic[T_sync, T_async]):
     """
 
     regex = re.compile(r'await\s+(\w|\.)*\s*\(.*\)')
-    name_regex: re.Pattern[str]
 
     def __init__(
         self,
@@ -82,7 +81,7 @@ class HybridFunction(Generic[T_sync, T_async]):
 
         self._instance: Optional[object] = None
 
-        self.name_regex = re.compile(rf'\(*{self._name}\)*\s*')
+        self.name_regex: re.Pattern[str] = re.compile(rf'\(*{self._name}\)*\s*')
 
     def __repr__(self) -> str:
         return f'HybridFunction({self._name!r}, {self.sync_callback!r}, {self.async_callback!r})'
