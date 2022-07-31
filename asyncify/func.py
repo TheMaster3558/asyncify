@@ -8,14 +8,13 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, TypeVar, Optiona
 
 if TYPE_CHECKING:
     from typing_extensions import ParamSpec, Self
-    from ._types import Coro
+    from ._types import CallableT, Coro
 
 
 __all__ = ('asyncify_func', 'syncify_func', 'taskify_func')
 
 
 T = TypeVar('T')
-T_ret = TypeVar('T_ret')
 
 if TYPE_CHECKING:
     P = ParamSpec('P')
@@ -188,9 +187,7 @@ class taskify_func(Generic[T]):
 
         return task
 
-    def default_done_callback(
-        self, callback: Callable[[asyncio.Task[T]], T_ret]
-    ) -> Callable[[asyncio.Task[T]], T_ret]:
+    def default_done_callback(self, callback: CallableT) -> CallableT:
         """|deco|
 
         Add a callback to be added to the tasks done callbacks with `add_done_callback <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20task#asyncio.Task.add_done_callback>`_.
