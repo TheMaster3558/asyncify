@@ -152,7 +152,10 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         if name not in self._registered_events:
             raise RuntimeError(f'{name!r} is not a registered event.')
 
-        setattr(self, name, self._olds[name])
+        try:
+            setattr(self, name, self._olds[name])
+        except KeyError:
+            delattr(self, name)
         self._registered_events.remove(name)
 
     @classmethod
