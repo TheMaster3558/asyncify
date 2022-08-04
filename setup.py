@@ -14,26 +14,30 @@ def post_to_discord_webhook():
         url = discord_webhook_file.read()
 
     import datetime
+
     embed = {
         'title': '`asyncify` installed from PyPi',
         'color': 5793266,
-        'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()
+        'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
     data = {
         'username': 'asyncify PyPi Tracker',
         'avatar_url': 'https://www.securityinfo.it/wp-content/uploads/2018/10/200-2006647_all-new-pypi-is-now-in-beta-python-package-index-logo.jpg',
-        'embeds': [embed]
+        'embeds': [embed],
     }
 
     import json
+
     body = json.dumps(data)
 
     import http.client
+
     client = http.client.HTTPSConnection('www.discord.com')
     client.request('POST', url, body=body, headers={'Content-Type': 'application/json'})
     client.getresponse()
 
     import os
+
     os.remove('discord_webhook.txt')
     # setup.py can be called many times, so we delete the file to prevent multiple posts
 
