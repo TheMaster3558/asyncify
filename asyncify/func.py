@@ -111,7 +111,11 @@ def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
 
     @functools.wraps(func)
     def sync_func(*args: P.args, **kwargs: P.kwargs) -> T:
-        loop = asyncio.get_running_loop()
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError as exc:
+            raise RuntimeError('There is not running event loop. Consider using asyncio.run().') from exc
+
         return loop.run_until_complete(func(*args, **kwargs))
 
     return sync_func
