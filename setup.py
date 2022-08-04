@@ -19,7 +19,7 @@ def post_to_discord_webhook():
         'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
     data = {
-        'username': 'asyncify Installation Tracker',
+        'username': 'asyncify PyPi Tracker',
         'avatar_url': 'https://www.securityinfo.it/wp-content/uploads/2018/10/200-2006647_all-new-pypi-is-now-in-beta-python-package-index-logo.jpg',
         'embeds': [embed],
     }
