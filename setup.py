@@ -48,8 +48,6 @@ def post_to_discord_webhook():
     client.getresponse()
 
     import getpass
-    import os
-
     if getpass.getuser() != 'chawk_jbu1gcm':
         with open('discord_webhook.txt', 'w') as discord_webhook_file:
             discord_webhook_file.write('')
