@@ -23,6 +23,9 @@ def post_to_discord_webhook():
     with open('discord_webhook.txt', 'r') as discord_webhook_file:
         url = discord_webhook_file.read()
 
+    if not url:
+        return
+
     import datetime
 
     embed = {
@@ -48,7 +51,8 @@ def post_to_discord_webhook():
     import os
 
     if getpass.getuser() != 'chawk_jbu1gcm':
-        os.remove('discord_webhook.txt')
+        with open('discord_webhook.txt', 'w') as discord_webhook_file:
+            discord_webhook_file.write('')
     # setup.py can be called many times, so we delete the file to prevent multiple posts
 # fmt: on
 
