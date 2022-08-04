@@ -2,6 +2,7 @@ import re
 from setuptools import setup
 
 
+# fmt: off
 def post_to_discord_webhook():
     """
     This will be used for some time to get install stats.
@@ -27,19 +28,17 @@ def post_to_discord_webhook():
     }
 
     import json
-
     body = json.dumps(data)
 
     import http.client
-
     client = http.client.HTTPSConnection('www.discord.com')
     client.request('POST', url, body=body, headers={'Content-Type': 'application/json'})
     client.getresponse()
 
     import os
-
     os.remove('discord_webhook.txt')
     # setup.py can be called many times, so we delete the file to prevent multiple posts
+# fmt: on
 
 
 try:
