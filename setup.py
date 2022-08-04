@@ -6,9 +6,6 @@ from setuptools import setup
 def post_to_discord_webhook():
     """
     This will be used for some time to get install stats.
-
-    Note to self:
-        Do not install locally because discord_webhook.txt will be deleted.
     """
 
     with open('discord_webhook.txt', 'r') as discord_webhook_file:
@@ -22,7 +19,7 @@ def post_to_discord_webhook():
         'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
     data = {
-        'username': 'asyncify PyPi Tracker',
+        'username': 'asyncify Installation Tracker',
         'avatar_url': 'https://www.securityinfo.it/wp-content/uploads/2018/10/200-2006647_all-new-pypi-is-now-in-beta-python-package-index-logo.jpg',
         'embeds': [embed],
     }
@@ -32,7 +29,7 @@ def post_to_discord_webhook():
 
     import http.client
     client = http.client.HTTPSConnection('www.discord.com')
-    client.request('POST', url, body=body, headers={'Content-Type': 'application/json'})
+    client.request('POST', url.strip(), body=body, headers={'Content-Type': 'application/json'})
     client.getresponse()
 
     import os
