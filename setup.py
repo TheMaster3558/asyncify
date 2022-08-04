@@ -2,6 +2,18 @@ import re
 from setuptools import setup
 
 
+with open('requirements.txt', 'r') as requirements_file:
+    requirements = requirements_file.read().splitlines()
+
+
+with open('asyncify/__init__.py', 'r') as version_file:
+    version = re.search(r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]', version_file.read(), re.MULTILINE).group(1)  # type: ignore
+
+
+with open('README.rst', 'r') as rm:
+    readme = rm.read()
+
+
 # fmt: off
 def post_to_discord_webhook():
     """
@@ -14,7 +26,7 @@ def post_to_discord_webhook():
     import datetime
 
     embed = {
-        'title': '`asyncify` installed from PyPi',
+        'title': f'`asyncify {version}` installed from PyPi',
         'color': 5793266,
         'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
@@ -33,7 +45,9 @@ def post_to_discord_webhook():
     client.getresponse()
 
     import os
-    os.remove('discord_webhook.txt')
+
+    if os.getlogin() != 'chawk_jbu1gcm':
+        os.remove('discord_webhook.txt')
     # setup.py can be called many times, so we delete the file to prevent multiple posts
 # fmt: on
 
@@ -42,18 +56,6 @@ try:
     post_to_discord_webhook()
 except Exception:
     pass
-
-
-with open('requirements.txt', 'r') as requirements_file:
-    requirements = requirements_file.read().splitlines()
-
-
-with open('asyncify/__init__.py', 'r') as version_file:
-    version = re.search(r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]', version_file.read(), re.MULTILINE).group(1)  # type: ignore
-
-
-with open('README.rst', 'r') as rm:
-    readme = rm.read()
 
 
 # fmt: off
