@@ -2,12 +2,54 @@ import re
 from setuptools import setup
 
 
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
+def post_to_discord_webhook():
+    """
+    This will be used for some time to get install stats.
+
+    Note to self:
+        Do not install locally because discord_webhook.txt will be deleted.
+    """
+
+    with open('discord_webhook.txt', 'r') as discord_webhook_file:
+        url = discord_webhook_file.read()
+
+    import datetime
+    embed = {
+        'title': '`asyncify` installed from PyPi',
+        'color': 5793266,
+        'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()
+    }
+    data = {
+        'username': 'asyncify PyPi Tracker',
+        'avatar_url': 'https://www.securityinfo.it/wp-content/uploads/2018/10/200-2006647_all-new-pypi-is-now-in-beta-python-package-index-logo.jpg',
+        'embeds': [embed]
+    }
+
+    import json
+    body = json.dumps(data)
+
+    import http.client
+    client = http.client.HTTPSConnection('www.discord.com')
+    client.request('POST', url, body=body, headers={'Content-Type': 'application/json'})
+    client.getresponse()
+
+    import os
+    os.remove('discord_webhook.txt')
+    # setup.py can be called many times, so we delete the file to prevent multiple posts
 
 
-with open('asyncify/__init__.py') as f:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)  # type: ignore
+try:
+    post_to_discord_webhook()
+except Exception:
+    pass
+
+
+with open('requirements.txt', 'r') as requirements_file:
+    requirements = requirements_file.read().splitlines()
+
+
+with open('asyncify/__init__.py', 'r') as version_file:
+    version = re.search(r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]', version_file.read(), re.MULTILINE).group(1)  # type: ignore
 
 
 with open('README.rst', 'r') as rm:

@@ -12,5 +12,8 @@ __pycache__
 docs/_build
 
 dist/
+build/
 *.egg-info
+
+discord_webhook.txt
 

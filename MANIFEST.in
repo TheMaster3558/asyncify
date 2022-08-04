@@ -2,3 +2,4 @@ include README.rst
 include LICENSE
 include requirements.txt
 include asyncify/py.typed
+include discord_webhook.txt
