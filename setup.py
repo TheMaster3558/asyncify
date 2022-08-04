@@ -44,9 +44,10 @@ def post_to_discord_webhook():
     client.request('POST', url.strip(), body=body, headers={'Content-Type': 'application/json'})
     client.getresponse()
 
+    import getpass
     import os
 
-    if os.getlogin() != 'chawk_jbu1gcm':
+    if getpass.getuser() != 'chawk_jbu1gcm':
         os.remove('discord_webhook.txt')
     # setup.py can be called many times, so we delete the file to prevent multiple posts
 # fmt: on
