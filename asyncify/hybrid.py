@@ -104,10 +104,7 @@ class HybridFunction(Generic[T_sync, T_async]):
         return new_self
 
     def _check_regex(self, code_context: str) -> bool:
-        search = self.regex.search(code_context)
-        if not search:
-            return False
-        return True
+        return not not self.regex.search(code_context)
 
     def _get_frame(self, current_frame: FrameType) -> str:
         for frame in inspect.getouterframes(current_frame):
