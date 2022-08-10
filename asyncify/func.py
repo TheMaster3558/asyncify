@@ -195,7 +195,7 @@ class taskify_func(Generic[T]):
 
         Add a callback to be added to the tasks done callbacks with `add_done_callback <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20task#asyncio.Task.add_done_callback>`_.
         """
-        if not inspect.isfunction(callback):
+        if not TYPE_CHECKING and not inspect.isfunction(callback):
             raise TypeError(f'Expected a callable function, got {callback.__class__.__name__!r}')
 
         self._done_callbacks[callback.__name__] = callback
