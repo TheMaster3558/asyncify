@@ -41,7 +41,6 @@ class ThreadCoroutineExecutor(threading.Thread):
                     # the solution is to run it in a separate thread
                     thread.execute(aexec(code))
     """
-
     def __init__(self, wait: bool = False):
         super().__init__()
         self.wait = wait

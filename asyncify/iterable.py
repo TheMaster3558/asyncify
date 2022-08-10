@@ -68,7 +68,6 @@ class AsyncIterable(Generic[T]):
     TypeError
         The object passed was not an iterable.
     """
-
     __slots__ = ('iterable', 'iterator', 'before', 'after')
 
     def __init__(

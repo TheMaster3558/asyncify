@@ -58,7 +58,6 @@ class HybridFunction(Generic[T_sync, T_async]):
     .. warning::
         Make the to name the function uniquely. Functions with the same name could be called unexpectedly.
     """
-
     regex = re.compile(r'await\s+(\w|\.)*\s*\(.*\)')
 
     def __init__(
