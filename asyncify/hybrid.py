@@ -13,11 +13,11 @@ if TYPE_CHECKING:
 __all__ = ('HybridFunction',)
 
 
-T_sync = TypeVar('T_sync')
-T_async = TypeVar('T_async')
+SyncT = TypeVar('SyncT')
+AsyncT = TypeVar('AsyncT')
 
 
-class HybridFunction(Generic[T_sync, T_async]):
+class HybridFunction(Generic[SyncT, AsyncT]):
     """
     Do multiple things depending on whether it was awaited or not!
 
@@ -63,8 +63,8 @@ class HybridFunction(Generic[T_sync, T_async]):
     def __init__(
         self,
         name: str,
-        sync_callback: Callable[..., T_sync],
-        async_callback: Callable[..., Coro[T_async]],
+        sync_callback: Callable[..., SyncT],
+        async_callback: Callable[..., Coro[AsyncT]],
     ):
         if not inspect.isfunction(sync_callback):
             raise TypeError(f'Expected callable function, got {sync_callback.__class__.__name__!r}')
@@ -113,7 +113,7 @@ class HybridFunction(Generic[T_sync, T_async]):
                 return frame.code_context[0]
         raise RuntimeError('Could not tell if it should call sync or async.')
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Union[T_sync, Coro[T_async]]:
+    def __call__(self, *args: Any, **kwargs: Any) -> Union[SyncT, Coro[AsyncT]]:
         if self._instance:
             args = (self._instance, *args)
 
