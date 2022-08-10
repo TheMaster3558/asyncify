@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import functools
 import inspect
-import sys
 from typing import TYPE_CHECKING, Any, Callable, Dict, Set, Tuple, Type, TypeVar
 
 if TYPE_CHECKING:

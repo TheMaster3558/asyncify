@@ -8,7 +8,6 @@ from typing import (
     Iterable,
     Iterator,
     List,
-    NoReturn,
     TypeVar,
     Optional,
 )
