@@ -31,6 +31,8 @@ async def today_sleep_until(hours: Optional[int] = None, minutes: Optional[int] 
     Sleep until a certain time. The difference between this and :func:`sleep_until` is that this only sleeps within the current day.
 
     .. versionadded:: 1.3
+
+
     Parameters
     -----------
     hours: Optional[:class:`int`]
