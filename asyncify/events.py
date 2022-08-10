@@ -65,6 +65,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
     .. versionadded:: 1.1
     """
+
     _olds: Dict[str, Callable[..., Any]] = {}
 
     def __init__(self, *args: Any, **kwargs: Any):

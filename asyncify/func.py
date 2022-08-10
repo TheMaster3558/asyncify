@@ -156,6 +156,7 @@ class taskify_func(Generic[T]):
     TypeError
         The object passed was not a coroutine function.
     """
+
     def __init__(self, func: Callable[..., Coro[T]]):
         if not inspect.iscoroutinefunction(func):
             raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
