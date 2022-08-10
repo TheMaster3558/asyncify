@@ -15,53 +15,6 @@ with open('README.rst', 'r') as rm:
 
 
 # fmt: off
-def post_to_discord_webhook():
-    """
-    This will be used for some time to get install stats.
-    """
-
-    with open('discord_webhook.txt', 'r') as discord_webhook_file:
-        url = discord_webhook_file.read()
-
-    if not url:
-        return
-
-    import datetime
-
-    embed = {
-        'title': f'`asyncify {version}` installed from PyPi',
-        'color': 5793266,
-        'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(),
-    }
-    data = {
-        'username': 'asyncify PyPi Tracker',
-        'avatar_url': 'https://www.securityinfo.it/wp-content/uploads/2018/10/200-2006647_all-new-pypi-is-now-in-beta-python-package-index-logo.jpg',
-        'embeds': [embed],
-    }
-
-    import json
-    body = json.dumps(data)
-
-    import http.client
-    client = http.client.HTTPSConnection('www.discord.com')
-    client.request('POST', url.strip(), body=body, headers={'Content-Type': 'application/json'})
-    client.getresponse()
-
-    import getpass
-    if getpass.getuser() != 'chawk_jbu1gcm' or True:
-        with open('discord_webhook.txt', 'w') as discord_webhook_file:
-            discord_webhook_file.write('')
-    # setup.py can be called many times, so we delete the file to prevent multiple posts
-# fmt: on
-
-
-try:
-    post_to_discord_webhook()
-except Exception:
-    pass
-
-
-# fmt: off
 packages = [
     'asyncify'
     ]
