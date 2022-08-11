@@ -5,7 +5,6 @@ import re
 from typing import TYPE_CHECKING, Any, Callable, Generic, Optional, TypeVar, Union
 
 if TYPE_CHECKING:
-    from types import FrameType
     from typing_extensions import Self
     from ._types import Coro
 
@@ -19,7 +18,7 @@ AsyncT = TypeVar('AsyncT')
 
 class HybridFunction(Generic[SyncT, AsyncT]):
     """
-    Do multiple things depending on whether it was awaited or not!
+    Do multiple things depending on whether it was awaited or not! Credit to a user Andy in the python discord server for the regex.
 
     .. versionchanged:: 2.0
         Changed from function `hybrid_function` to class `HybridFunction`
@@ -57,9 +56,12 @@ class HybridFunction(Generic[SyncT, AsyncT]):
 
     .. warning::
         Make the to name the function uniquely. Functions with the same name could be called unexpectedly.
+
+    .. warning::
+        The hybrid function call can be the ONLY thing on a line.
     """
 
-    regex = re.compile(r'await\s+(\w|\.)*\s*\(.*\)')
+    _PRIMARY_REGEX = re.compile(r'await\s+[\w.]*\s*\(.*\)')
 
     def __init__(
         self,
@@ -81,7 +83,7 @@ class HybridFunction(Generic[SyncT, AsyncT]):
 
         self._instance: Optional[object] = None
 
-        self.name_regex: re.Pattern[str] = re.compile(rf'\(*{self._name}\)*\s*')
+        self._name_regex: re.Pattern[str] = re.compile(rf'(.*?)(\bawait {self._name}\b)(.*)')
 
     def __repr__(self) -> str:
         return f'HybridFunction({self._name!r}, {self.sync_callback!r}, {self.async_callback!r})'
@@ -103,25 +105,14 @@ class HybridFunction(Generic[SyncT, AsyncT]):
         new_self._instance = instance
         return new_self
 
-    def _check_regex(self, code_context: str) -> bool:
-        return not not self.regex.search(code_context)
-
-    def _get_frame(self, current_frame: FrameType) -> str:
-        for frame in inspect.getouterframes(current_frame):
-            if not frame.code_context:
-                continue
-            if self.name_regex.search(frame.code_context[0]):
-                return frame.code_context[0]
-        raise RuntimeError('Could not tell if it should call sync or async.')
+    def _check_regex(self) -> bool:
+        code: str = inspect.getouterframes(inspect.currentframe())[2].code_context[0].strip()  # type: ignore
+        return not not self._name_regex.fullmatch(code)
 
     def __call__(self, *args: Any, **kwargs: Any) -> Union[SyncT, Coro[AsyncT]]:
         if self._instance:
             args = (self._instance, *args)
 
-        frame = inspect.currentframe()
-        assert frame is not None
-
-        code_context = self._get_frame(frame).strip()
-        if self._check_regex(code_context):
+        if self._check_regex():
             return self.async_callback(*args, **kwargs)
         return self.sync_callback(*args, **kwargs)
