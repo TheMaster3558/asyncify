@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
+    Coroutine,
     Generator,
     Generic,
     Iterable,
@@ -13,14 +15,14 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
-    from ._types import NoArgAwaitable
+    from typing_extensions import Self, TypeAlias
 
 
 __all__ = ('AsyncIterable',)
 
 
 T = TypeVar('T')
+NoParamsCoroFunc: TypeAlias = Callable[[], Coroutine[Any, Any, Any]]
 
 
 class AsyncIterable(Generic[T]):
@@ -74,8 +76,8 @@ class AsyncIterable(Generic[T]):
         self,
         iterable: Iterable[T],
         *,
-        before: Optional[NoArgAwaitable[Any]] = None,
-        after: Optional[NoArgAwaitable[Any]] = None,
+        before: Optional[NoParamsCoroFunc] = None,
+        after: Optional[NoParamsCoroFunc] = None,
     ):
         if not hasattr(iterable, '__iter__'):
             raise TypeError(f'Expected iterable object, got {iterable.__class__.__name__!r}')
@@ -83,8 +85,8 @@ class AsyncIterable(Generic[T]):
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None
 
-        self.before: Optional[NoArgAwaitable[Any]] = before
-        self.after: Optional[NoArgAwaitable[Any]] = after
+        self.before = before
+        self.after = after
 
     def __repr__(self) -> str:
         return f'AsyncIterable({self.iterator!r}, before={self.before!r}, after={self.after!r})'
