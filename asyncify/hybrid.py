@@ -56,12 +56,7 @@ class HybridFunction(Generic[SyncT, AsyncT]):
 
     .. warning::
         Make the to name the function uniquely. Functions with the same name could be called unexpectedly.
-
-    .. warning::
-        The hybrid function call can be the ONLY thing on a line.
     """
-
-    _PRIMARY_REGEX = re.compile(r'await\s+[\w.]*\s*\(.*\)')
 
     def __init__(
         self,
