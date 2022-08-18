@@ -75,10 +75,14 @@ class ThreadCoroutineExecutor(threading.Thread):
 
     def close(self) -> None:
         """
-        Stop the event loop and the thread will join the main thread.
+        Close the event loop and the thread will join the main thread.
+
+        .. warning::
+            If this is called manually, all tasks will be cancelled regardless of if ``wait`` is ``True``.
+            The ``async with`` context manager is meant to wait for the tasks.
         """
         self._running = False
-        self._loop.call_soon_threadsafe(self._loop.stop)
+        self._loop.call_soon_threadsafe(self._loop.close)
 
     def execute(self, coro: Coroutine[Any, Any, T]) -> asyncio.Future[T]:
         """
