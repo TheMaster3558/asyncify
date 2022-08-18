@@ -94,7 +94,7 @@ class AsyncIterable(Generic[T]):
     def __await__(self) -> Generator[Any, Any, List[T]]:
         return self.flatten().__await__()
 
-    def __aiter__(self) -> "Self":
+    def __aiter__(self) -> Self:
         self.iterator = iter(self.iterable)
         return self
 
