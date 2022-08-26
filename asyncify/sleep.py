@@ -20,7 +20,7 @@ async def sleep_until(until: datetime.datetime) -> None:
         `until` is not :class:`datetime.datetime.`
     """
     if not isinstance(until, datetime.datetime):  # type: ignore
-        raise TypeError(f'Expected datetime.datetime, not {until.__class__.__name__!r}')
+        raise TypeError(f'Expected datetime.datetime, not {type(until).__name__!r}')
 
     seconds = (until - datetime.datetime.now(tz=until.tzinfo)).total_seconds()
     await asyncio.sleep(seconds)

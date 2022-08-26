@@ -65,11 +65,11 @@ class HybridFunction(Generic[SyncT, AsyncT]):
         async_callback: Callable[..., Coro[AsyncT]],
     ):
         if not inspect.isfunction(sync_callback):
-            raise TypeError(f'Expected callable function, got {sync_callback.__class__.__name__!r}')
+            raise TypeError(f'Expected callable function, got {type(sync_callback).__name__!r}')
 
         if not inspect.iscoroutinefunction(async_callback):
             raise TypeError(
-                f'Expected a callable coroutine function, got {async_callback.__class__.__name__!r}'
+                f'Expected a callable coroutine function, got {type(async_callback).__name__!r}'
             )
 
         self._name = name
@@ -89,14 +89,14 @@ class HybridFunction(Generic[SyncT, AsyncT]):
 
     def __eq__(self, other: object) -> bool:
         return (
-            isinstance(other, self.__class__)
+            isinstance(other, type(self))
             and other._name == self._name
             and other.sync_callback is self.sync_callback
             and other.async_callback is self.async_callback
         )
 
     def __get__(self, instance: object, owner: type) -> Self:
-        new_self = self.__class__(self._name, self.sync_callback, self.async_callback)
+        new_self = type(self)(self._name, self.sync_callback, self.async_callback)
         new_self._instance = instance
         return new_self
 

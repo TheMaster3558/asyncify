@@ -80,7 +80,7 @@ class AsyncIterable(Generic[T]):
         after: Optional[NoParamsCoroFunc] = None,
     ):
         if not hasattr(iterable, '__iter__'):
-            raise TypeError(f'Expected iterable object, got {iterable.__class__.__name__!r}')
+            raise TypeError(f'Expected iterable object, got {type(self).__name__!r}')
 
         self.iterable = iterable
         self.iterator: Optional[Iterator[T]] = None

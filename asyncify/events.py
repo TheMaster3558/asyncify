@@ -86,7 +86,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
 
     def __repr__(self) -> str:
         return (
-            f'<EventsEventLoopPolicy base={self.__class__.__bases__[0]!r},'
+            f'<EventsEventLoopPolicy base={type(self).__bases__[0]!r},'
             f' registered_events={self._registered_events!r}>'
         )
 
@@ -117,7 +117,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             The name either is invalid.
         """
         if not TYPE_CHECKING and not inspect.isfunction(func):
-            raise TypeError(f'Expected a callable, got {func.__class__.__name__!r}')
+            raise TypeError(f'Expected a callable, got {type(func).__name__!r}')
 
         if func.__name__ not in _VALID_NAMES:
             raise RuntimeError(f'{func.__name__!r} is not a valid function name. {_VALID_NAMES} are valid.')

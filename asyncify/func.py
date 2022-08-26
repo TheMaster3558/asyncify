@@ -57,7 +57,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coro[T]]:
         The object passed in was not a function.
     """
     if not inspect.isfunction(func):
-        raise TypeError(f'Expected a callable function, got {func.__class__.__name__!r}')
+        raise TypeError(f'Expected a callable function, got {type(func).__name__!r}')
 
     @functools.wraps(func)
     async def async_func(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -107,7 +107,7 @@ def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
         The object passed was not a coroutine function.
     """
     if not inspect.iscoroutinefunction(func):
-        raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
+        raise TypeError(f'Expected a callable coroutine function, got {type(func).__name__!r}')
 
     @functools.wraps(func)
     def sync_func(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -159,7 +159,7 @@ class taskify_func(Generic[T]):
 
     def __init__(self, func: Callable[..., Coro[T]]):
         if not inspect.iscoroutinefunction(func):
-            raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
+            raise TypeError(f'Expected a callable coroutine function, got {type(func).__name__!r}')
 
         self.func = func
         self._done_callbacks: Dict[str, Callable[[asyncio.Task[T]], Any]] = {}
@@ -172,7 +172,7 @@ class taskify_func(Generic[T]):
         return f'taskify_func({self.func!r})'
 
     def __get__(self, instance: object, owner: type) -> Self:
-        new_self = self.__class__(self.func)
+        new_self = type(self)(self.func)
         new_self._done_callbacks = self._done_callbacks
         new_self._instance = self
         return new_self
@@ -197,7 +197,7 @@ class taskify_func(Generic[T]):
         Add a callback to be added to the tasks done callbacks with `add_done_callback <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20task#asyncio.Task.add_done_callback>`_.
         """
         if not TYPE_CHECKING and not inspect.isfunction(callback):
-            raise TypeError(f'Expected a callable function, got {callback.__class__.__name__!r}')
+            raise TypeError(f'Expected a callable function, got {type(self).__name__!r}')
 
         self._done_callbacks[callback.__name__] = callback
         return callback
