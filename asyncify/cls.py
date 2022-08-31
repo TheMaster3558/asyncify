@@ -78,6 +78,11 @@ def asyncify_class(
         async def main():
             await client.request('GET', 'https://python.org')
 
+
+        @asyncify.asyncify_class  # it does not need the ()
+        class Foo:
+            ...
+
     Raises
     -------
     TypeError
