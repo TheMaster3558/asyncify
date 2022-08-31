@@ -70,7 +70,7 @@ class AsyncIterable(Generic[T]):
         The object passed was not an iterable.
     """
 
-    __slots__ = ('iterable', 'iterator', 'before', 'after')
+    __slots__ = ('iterable', '_iterator', 'before', 'after')
 
     def __init__(
         self,
@@ -83,31 +83,41 @@ class AsyncIterable(Generic[T]):
             raise TypeError(f'Expected iterable object, got {type(self).__name__!r}')
 
         self.iterable = iterable
-        self.iterator: Optional[Iterator[T]] = None
+        self._iterator: Optional[Iterator[T]] = None
 
         self.before = before
         self.after = after
 
+    @property
+    def iterator(self) -> Optional[Iterator[T]]:
+        """
+        The current object that is being used for iteration.
+        Returns
+        -------
+        Optional[:class:`Iterator`]
+        """
+        return self._iterator
+
     def __repr__(self) -> str:
-        return f'AsyncIterable({self.iterator!r}, before={self.before!r}, after={self.after!r})'
+        return f'AsyncIterable({self._iterator!r}, before={self.before!r}, after={self.after!r})'
 
     def __await__(self) -> Generator[Any, Any, List[T]]:
         return self.flatten().__await__()
 
     def __aiter__(self) -> Self:
-        self.iterator = iter(self.iterable)
+        self._iterator = iter(self.iterable)
         return self
 
     async def __anext__(self) -> T:
-        assert self.iterator is not None
+        assert self._iterator is not None
 
         if self.before is not None:
             await self.before()
 
         try:
-            item = next(self.iterator)
+            item = next(self._iterator)
         except StopIteration:
-            self.iterator = None
+            self._iterator = None
             raise StopAsyncIteration
 
         if self.after is not None:
