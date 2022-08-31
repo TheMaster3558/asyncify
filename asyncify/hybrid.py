@@ -68,9 +68,7 @@ class HybridFunction(Generic[SyncT, AsyncT]):
             raise TypeError(f'Expected callable function, got {type(sync_callback).__name__!r}')
 
         if not inspect.iscoroutinefunction(async_callback):
-            raise TypeError(
-                f'Expected a callable coroutine function, got {type(async_callback).__name__!r}'
-            )
+            raise TypeError(f'Expected a callable coroutine function, got {type(async_callback).__name__!r}')
 
         self._name = name
         self.sync_callback = sync_callback
