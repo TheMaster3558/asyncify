@@ -43,7 +43,7 @@ class ThreadCoroutineExecutor(threading.Thread):
     """
 
     def __init__(self, wait: bool = False):
-        super().__init__()
+        super().__init__(daemon=True)
         self.wait = wait
         self._running: bool = False
         self._unfinished_futures: List[asyncio.Future[Any]] = []
