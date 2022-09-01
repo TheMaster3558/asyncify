@@ -10,8 +10,7 @@ jobs:
         uses: jakebailey/pyright-action@v1
         with:
           python-version: "3.7"
-          project: ".."
-          version: '1.1.265'
+          version: '1.1.269'
 
       - name: Run black
         run: |
