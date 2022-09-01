@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING, Callable, Container, Optional, overload, Union
+from typing import TYPE_CHECKING, Callable, Container, Optional, Union
 
 from .func import asyncify_func
 
@@ -19,20 +19,6 @@ def ignore(func: CallableT) -> CallableT:
     """
     func._asyncify_ignore = True  # type: ignore # we are assigning new attribute here
     return func
-
-
-@overload
-def asyncify_class(
-    cls: None, asyncify: Optional[Container[str]] = None, asyncify_ignore: Optional[Container[str]] = None
-) -> Callable[[TypeT], TypeT]:
-    ...
-
-
-@overload
-def asyncify_class(
-    cls: TypeT, asyncify: Optional[Container[str]] = None, asyncify_ignore: Optional[Container[str]] = None
-) -> TypeT:
-    ...
 
 
 def asyncify_class(
@@ -94,7 +80,7 @@ def asyncify_class(
     if cls is None:
 
         def inner(inner_cls: TypeT) -> TypeT:
-            return asyncify_class(inner_cls, asyncify=asyncify, asyncify_ignore=asyncify_ignore)
+            return asyncify_class(inner_cls, asyncify=asyncify, asyncify_ignore=asyncify_ignore)  # type: ignore
 
         return inner
 
