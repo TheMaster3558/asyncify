@@ -1,0 +1,13 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
+        with:
+          options: "--check -S --target-version=py37 --target-version=py38 --target-version=py39 --target-version=py310 --line-length 110"
+          src: "."
