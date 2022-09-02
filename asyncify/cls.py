@@ -78,7 +78,7 @@ def asyncify_class(
     This uses :func:`asyncify.asyncify_func`.
 
     Example
-    ---------
+    -------
     .. code:: py
 
         import asyncify
@@ -106,7 +106,7 @@ def asyncify_class(
             ...
 
     Raises
-    -------
+    ------
     TypeError
         The object passed was not a class or both `asyncify` and `asyncify_ignore` were passed.
     ValueError

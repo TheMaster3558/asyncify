@@ -35,7 +35,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
     This is done using the event loop policy.
 
     Example
-    ---------
+    -------
     .. code:: py
 
         import asyncio
@@ -99,7 +99,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         ``get_child_watcher``, and ``set_child_watcher``.
 
         Example
-        ---------
+        -------
         .. code:: py
 
             @policy.event
@@ -110,7 +110,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             Using it multiple times on the same method will overwrite the old one.
 
         Raises
-        -------
+        ------
         TypeError
             `func` is not a callable.
         RuntimeError
@@ -144,7 +144,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             The name of the event.
 
         Raises
-        -------
+        ------
         RuntimeError
             `name` is not a registered event.
         """
@@ -166,7 +166,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         but can be changed.
 
         Parameters
-        ------------
+        ----------
         policy_cls: Type[:class:`asyncio.AbstractEventLoopPolicy`]
             This class must inherit from
             `asyncio.AbstractEventLoopPolicy <https://docs.python.org/3/library/asyncio-policy.html#asyncio.AbstractEventLoopPolicy>`_.
@@ -175,7 +175,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
         This example uses `uvloop`.
 
         Example
-        --------
+        -------
         .. code:: py
 
             import asyncio
@@ -194,7 +194,7 @@ class EventsEventLoopPolicy(asyncio.DefaultEventLoopPolicy):
             print(loop)  # <uvloop.Loop running=False closed=False debug=False>
 
         Raises
-        -------
+        ------
         TypeError
             `policy_cls` does not inherit from `asyncio.AbstractEventLoopPolicy`.
         """

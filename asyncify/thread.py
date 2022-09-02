@@ -22,12 +22,12 @@ class ThreadCoroutineExecutor(threading.Thread):
     .. versionadded:: 2.0
 
     Parameters
-    -----------
+    ----------
     wait: :class:`bool`
         Whether to wait for all tasks to finish before exiting context manager. Defaults to ``False``.
 
     Example
-    --------
+    -------
     .. code:: py
 
         import asyncify

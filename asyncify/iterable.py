@@ -34,7 +34,7 @@ class AsyncIterable(Generic[T]):
 
 
     Parameters
-    ------------
+    ----------
     iterable: :class:`Iterable`
         The iterable to iterator over.
     before: Optional[``async_function``]
@@ -51,7 +51,7 @@ class AsyncIterable(Generic[T]):
         `before` is called.
 
     Example
-    ---------
+    -------
     .. code:: py
 
         import asyncio
@@ -65,7 +65,7 @@ class AsyncIterable(Generic[T]):
                 print(f'{number} seconds have passed.')
 
     Raises
-    -------
+    ------
     TypeError
         The object passed was not an iterable.
     """
@@ -92,6 +92,7 @@ class AsyncIterable(Generic[T]):
     def iterator(self) -> Optional[Iterator[T]]:
         """
         The current object that is being used for iteration.
+
         Returns
         -------
         Optional[:class:`Iterator`]

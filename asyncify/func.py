@@ -28,7 +28,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coro[T]]:
     Make a synchronous function into an asynchronous function by running it in a separate thread.
 
     Example
-    --------
+    -------
     .. code:: py
 
         import asyncify
@@ -52,7 +52,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coro[T]]:
         Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
 
     Raises
-    -------
+    ------
     TypeError
         The object passed in was not a function.
     """
@@ -75,7 +75,7 @@ def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
     Make an asynchronous function a synchronous function.
 
     Example
-    --------
+    -------
     .. code:: py
 
         import asyncio
@@ -102,7 +102,7 @@ def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
         There must be a running event loop to call it.
 
     Raises
-    -------
+    ------
     TypeError
         The object passed was not a coroutine function.
     """
@@ -152,7 +152,7 @@ class taskify_func(Generic[T]):
         There must be a running event loop to call it.
 
     Raises
-    -------
+    ------
     TypeError
         The object passed was not a coroutine function.
     """

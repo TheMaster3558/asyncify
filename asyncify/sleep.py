@@ -10,12 +10,12 @@ async def sleep_until(until: datetime.datetime) -> None:
     .. versionadded:: 1.3
 
     Parameters
-    -----------
+    ----------
     until: :class:`datetime.datetime`
         The time to sleep until.
 
     Raises
-    -------
+    ------
     TypeError
         `until` is not :class:`datetime.datetime.`
     """
@@ -36,7 +36,7 @@ async def today_sleep_until(
 
 
     Parameters
-    -----------
+    ----------
     hours: Optional[:class:`int`]
         The hours in the time.
     minutes: Optional[:class:`int`]
@@ -46,13 +46,13 @@ async def today_sleep_until(
 
 
     Raises
-    -------
+    ------
     TypeError
         No arguments were provided.
 
 
     Example
-    ---------
+    -------
     .. code:: py
 
         import asyncify

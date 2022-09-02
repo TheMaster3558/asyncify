@@ -35,7 +35,7 @@ class HybridFunction(Generic[SyncT, AsyncT]):
 
 
     Example
-    --------
+    -------
     .. code:: py
 
         import asyncify
@@ -83,6 +83,9 @@ class HybridFunction(Generic[SyncT, AsyncT]):
 
     @property
     def __name__(self) -> str:
+        """
+        The name of the hybrid function.
+        """
         return self._name
 
     def __eq__(self, other: object) -> bool:
