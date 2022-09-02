@@ -21,10 +21,7 @@ def ignore(func: CallableT) -> CallableT:
     .. deprecated:: 2.1
         Use :func:`class_exclude` instead.
     """
-    warnings.warn(
-        'ignore is deprecated since 2.1. Use class_exclude instead.',
-        category=DeprecationWarning
-    )
+    warnings.warn('ignore is deprecated since 2.1. Use class_exclude instead.', category=DeprecationWarning)
 
     func._asyncify_ignore = True  # type: ignore # we are assigning new attribute here
     return func
@@ -44,9 +41,11 @@ def class_include(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
     .. note::
         This decorator is meant to be used directly on the class.
     """
+
     def inner(cls: TypeT) -> TypeT:
         cls._class_include = method_names
         return cls
+
     return inner
 
 
@@ -64,9 +63,11 @@ def class_exclude(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
     .. note::
         This decorator is meant to be used directly on the class.
     """
+
     def inner(cls: TypeT) -> TypeT:
         cls._class_exclude = method_names
         return cls
+
     return inner
 
 
