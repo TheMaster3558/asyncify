@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING, Callable, Container, Optional, Union
+import warnings
+from typing import TYPE_CHECKING, Callable, Container
 
 from .func import asyncify_func
 
@@ -20,6 +21,11 @@ def ignore(func: CallableT) -> CallableT:
     .. deprecated:: 2.1
         Use :func:`class_exclude` instead.
     """
+    warnings.warn(
+        'ignore is deprecated since 2.1. Use class_exclude instead.',
+        category=DeprecationWarning
+    )
+
     func._asyncify_ignore = True  # type: ignore # we are assigning new attribute here
     return func
 
