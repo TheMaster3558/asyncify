@@ -27,10 +27,13 @@ def ignore(func: CallableT) -> CallableT:
 def class_include(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
     """|deco|
 
+    Select certain methods to be asyncified. All other methods will be ignored.
+
     Parameters
     ----------
     method_names: Container[:class:`str`]
-        A container (object with `__contains__`) that can has the names of the methods to `asyncify`.
+        A container (object with `__contains__`) that can has the names of the methods to asyncify.
+
 
     .. note::
         This decorator is meant to be used directly on the class.
@@ -44,10 +47,13 @@ def class_include(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
 def class_exclude(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
     """|deco|
 
+    Select certain methods to not be asyncified. All other methods will be asyncified.
+
     Parameters
     ----------
     method_names: Container[:class:`str`]
-        A container (object with `__contains__`) that can has the names of the methods to not `asyncify`.
+        A container (object with `__contains__`) that can has the names of the methods to not asyncify.
+
 
     .. note::
         This decorator is meant to be used directly on the class.
