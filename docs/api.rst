@@ -27,6 +27,14 @@ Classes
 
 |
 
+.. autodecorator:: class_include
+
+|
+
+.. autodecorator:: class_exclude
+
+|
+
 .. autodecorator:: ignore
 
 |
