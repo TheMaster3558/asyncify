@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import inspect
 import warnings
-from typing import TYPE_CHECKING, Callable, Container
-
+from typing import TYPE_CHECKING, Callable
 from .func import asyncify_func
 
 if TYPE_CHECKING:
@@ -27,16 +26,15 @@ def ignore(func: CallableT) -> CallableT:
     return func
 
 
-def class_include(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
+def class_include(*method_names: str) -> Callable[[TypeT], TypeT]:
     """|deco|
 
     Select certain methods to be asyncified. All other methods will be ignored.
 
     Parameters
     ----------
-    method_names: Container[:class:`str`]
-        A container (object with `__contains__`) that can has the names of the methods to asyncify.
-
+    method_names: :class:`str`
+        The methods to asyncify.
 
     .. note::
         This decorator is meant to be used directly on the class.
@@ -49,15 +47,15 @@ def class_include(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
     return inner
 
 
-def class_exclude(method_names: Container[str]) -> Callable[[TypeT], TypeT]:
+def class_exclude(*method_names: str) -> Callable[[TypeT], TypeT]:
     """|deco|
 
     Select certain methods to not be asyncified. All other methods will be asyncified.
 
     Parameters
     ----------
-    method_names: Container[:class:`str`]
-        A container (object with `__contains__`) that can has the names of the methods to not asyncify.
+    method_names: :class:`str`
+        The methods to not asyncify.
 
 
     .. note::
@@ -85,7 +83,8 @@ def asyncify_class(
         import asyncify
         import requests
 
-        @asyncify.asyncify_class(asyncify=('request', 'get', 'post'))  # don't asyncify random small methods
+        @asyncify.asyncify_class
+        @asyncify.class_include('request', 'get')
         class RequestsClient:
             def __init__(self):  # ignored by asyncify
                 self.session = requests.Session()
@@ -93,18 +92,14 @@ def asyncify_class(
             def request(self, method, url):  # now a coroutine function
                 return self.session.request(method, url)
 
-        # can also be used like this
-        RequestsClient = asyncify.asyncify_class(requests.Session)
+            def get(self, url):
+                return self.session.get(url)
 
         client = RequestsClient()
 
         async def main():
             await client.request('GET', 'https://python.org')
-
-
-        @asyncify.asyncify_class  # it does not need the ()
-        class Foo:
-            ...
+            await client.get(...)
 
     Raises
     ------
