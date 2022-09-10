@@ -93,7 +93,7 @@ def asyncify_class(
                 return self.session.request(method, url)
 
             def get(self, url):
-                return self.session.get(url)
+                return self.session.get(url)  # also a coroutine function
 
         client = RequestsClient()
 
@@ -115,7 +115,7 @@ def asyncify_class(
     exclude = getattr(cls, '_class_exclude', ())
 
     if include and exclude:
-        raise ValueError('@class_include and @class_exclude cannot both be used.')
+        raise ValueError('class_include and class_exclude cannot both be used.')
 
     for name, func in inspect.getmembers(cls):
         if not inspect.isfunction(func) or getattr(func, '_asyncify_ignore', False) or name.startswith('__'):
