@@ -28,7 +28,7 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coro[T]]:
     Make a synchronous function into an asynchronous function by running it in a separate thread.
 
     Example
-    -------
+    --------
     .. code:: py
 
         import asyncify
@@ -52,12 +52,12 @@ def asyncify_func(func: Callable[P, T]) -> Callable[P, Coro[T]]:
         Change it with `loop.set_default_executor <https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.set_default_executor>`_.
 
     Raises
-    ------
+    -------
     TypeError
         The object passed in was not a function.
     """
     if not inspect.isfunction(func):
-        raise TypeError(f'Expected a callable function, got {type(func).__name__!r}')
+        raise TypeError(f'Expected a callable function, got {func.__class__.__name__!r}')
 
     @functools.wraps(func)
     async def async_func(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -75,7 +75,7 @@ def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
     Make an asynchronous function a synchronous function.
 
     Example
-    -------
+    --------
     .. code:: py
 
         import asyncio
@@ -102,20 +102,16 @@ def syncify_func(func: Callable[P, Coro[T]]) -> Callable[P, T]:
         There must be a running event loop to call it.
 
     Raises
-    ------
+    -------
     TypeError
         The object passed was not a coroutine function.
     """
     if not inspect.iscoroutinefunction(func):
-        raise TypeError(f'Expected a callable coroutine function, got {type(func).__name__!r}')
+        raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
 
     @functools.wraps(func)
     def sync_func(*args: P.args, **kwargs: P.kwargs) -> T:
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError as exc:
-            raise RuntimeError('There is not running event loop. Consider using asyncio.run().') from exc
-
+        loop = asyncio.get_running_loop()
         return loop.run_until_complete(func(*args, **kwargs))
 
     return sync_func
@@ -152,14 +148,14 @@ class taskify_func(Generic[T]):
         There must be a running event loop to call it.
 
     Raises
-    ------
+    -------
     TypeError
         The object passed was not a coroutine function.
     """
 
     def __init__(self, func: Callable[..., Coro[T]]):
         if not inspect.iscoroutinefunction(func):
-            raise TypeError(f'Expected a callable coroutine function, got {type(func).__name__!r}')
+            raise TypeError(f'Expected a callable coroutine function, got {func.__class__.__name__!r}')
 
         self.func = func
         self._done_callbacks: Dict[str, Callable[[asyncio.Task[T]], Any]] = {}
@@ -172,9 +168,9 @@ class taskify_func(Generic[T]):
         return f'taskify_func({self.func!r})'
 
     def __get__(self, instance: object, owner: type) -> Self:
-        new_self = type(self)(self.func)
+        new_self = self.__class__(self.func)
         new_self._done_callbacks = self._done_callbacks
-        new_self._instance = instance
+        new_self._instance = self
         return new_self
 
     def __call__(self, *args: Any, **kwargs: Any) -> asyncio.Task[T]:
@@ -196,8 +192,8 @@ class taskify_func(Generic[T]):
 
         Add a callback to be added to the tasks done callbacks with `add_done_callback <https://docs.python.org/3/library/asyncio-task.html?highlight=asyncio%20task#asyncio.Task.add_done_callback>`_.
         """
-        if not TYPE_CHECKING and not inspect.isfunction(callback):
-            raise TypeError(f'Expected a callable function, got {type(self).__name__!r}')
+        if not inspect.isfunction(callback):
+            raise TypeError(f'Expected a callable function, got {callback.__class__.__name__!r}')
 
         self._done_callbacks[callback.__name__] = callback
         return callback
