@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional, Type
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -13,8 +13,8 @@ MISSING: Any = object()
 
 class Timer:
     def __init__(self):
-        self._start_time: int = MISSING
-        self._end_time: int = MISSING
+        self._start_time: float = MISSING
+        self._end_time: float = MISSING
         self._loop: asyncio.AbstractEventLoop = MISSING
             
     def start_timer(self) -> None:
@@ -40,4 +40,3 @@ class Timer:
         exc_tb: Optional[TracebackType],
     ) -> None:
         self.end_timer()
-        
